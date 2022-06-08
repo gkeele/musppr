@@ -1,0 +1,12 @@
+Package: musppr
+Title: R package for evaluation of genetic analyses in house mouse (Mus musculus) multiparental populations (MPPs) -- Collaborative Cross (CC), CC intercrosses (CC-RIX), and Diversity Outbred (DO) 
+Version: 0.0.1
+Authors@R: c(person("Gregory", "Keele", email = "gkeele@gmail.com", role = c("aut", "cre")))
+Description: This package contains a number of functions for evaluating genetic analyses (heritability estimation and QTL mapping) in mouse MPPs. It also includes functions to generate cartoon mosaic chromosomes commonly used to represent MPPs.
+Depends: R (>= 3.2.2)
+License: GPL (>= 2)
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
+Imports: MASS, qtl2, ggplot2, dplyr, magrittr, reshape2
+Suggests: miqtl, sommer
