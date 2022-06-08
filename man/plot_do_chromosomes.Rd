@@ -23,8 +23,12 @@ This function ...
 }
 \examples{
 set.seed(10)
+## CC-RIX
 plot_do_chromosomes(c(0, sort(runif(15, 0, 1)), 1), c(0, sort(runif(15, 0, 1)), 1), 
-cols1 = sample(qtl2::CCcolors, 16, replace = TRUE), cols2 = sample(qtl2::CCcolors, 16, replace = TRUE), width = 0.15, gap = 0.3) ## CC-RIX
+                    cols1 = sample(qtl2::CCcolors, 16, replace = TRUE), 
+                    cols2 = sample(qtl2::CCcolors, 16, replace = TRUE), width = 0.15, gap = 0.3)
+## DO
 plot_do_chromosomes(c(0, sort(runif(50, 0, 1)), 1), c(0, sort(runif(50, 0, 1)), 1), 
-cols1 = sample(qtl2::CCcolors, 51, replace = TRUE), cols2 = sample(qtl2::CCcolors, 51, replace = TRUE), width = 0.15, gap = 0.3) ## DO
+                    cols1 = sample(qtl2::CCcolors, 51, replace = TRUE), 
+                    cols2 = sample(qtl2::CCcolors, 51, replace = TRUE), width = 0.15, gap = 0.3)
 }
