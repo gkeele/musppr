@@ -19,5 +19,5 @@ plot_founder_chromosomes(
 This function ...
 }
 \examples{
-plot_founder_chromosomes(col = qtl2::CColors[1], width = 0.15, gap = 0.3)
+plot_founder_chromosomes(col = qtl2::CCcolors[1], width = 0.15, gap = 0.3)
 }

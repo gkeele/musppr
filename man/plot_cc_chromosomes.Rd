@@ -20,5 +20,5 @@ plot_cc_chromosomes(
 This function ...
 }
 \examples{
-plot_cc_chromosomes(intervals = c(0, sort(runif(n = 15, min = 0, max = 1)), 1), col = sample(qtl2::CColors, 16, replace = TRUE), width = 0.15, gap = 0.3
+plot_cc_chromosomes(intervals = c(0, sort(runif(n = 15, min = 0, max = 1)), 1), col = sample(qtl2::CCcolors, 16, replace = TRUE), width = 0.15, gap = 0.3
 }
