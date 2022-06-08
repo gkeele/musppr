@@ -3,7 +3,7 @@
 magrittr::`%>%`
 
 # Conversion function taken from qtl2convert
-map_df_to_list <- function (map_list, chr_column = "chr", pos_column = "pos", marker_column = "marker") {
+map_list_to_df <- function (map_list, chr_column = "chr", pos_column = "pos", marker_column = "marker") {
   
   nmar <- vapply(map_list, length, 1)
   markers <- unlist(lapply(map_list, names))
