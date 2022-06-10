@@ -8,7 +8,7 @@ eval_sim_h2 <- function(sim_h2, n, K, K_fit = NULL,
                         intercept = 0,
                         method = c("qtl2", "sommer", "miqtl")) {
   
-  if (!is.null(K_fit)) { K_fit <- K }
+  if (is.null(K_fit)) { K_fit <- K }
   method <- method[1]
   
   ## Simulation
@@ -56,7 +56,7 @@ eval_sim_h2 <- function(sim_h2, n, K, K_fit = NULL,
 eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains, K_strains_fit = NULL,
                                   intercept = 0, method = c("sommer", "miqtl")) {
   
-  if (!is.null(K_strains_fit)) { K_strains_fit <- K_strains }
+  if (is.null(K_strains_fit)) { K_strains_fit <- K_strains }
   method <- method[1]
   
   u <- t(MASS::mvrnorm(n = n_sims, mu = rep(0, nrow(K_strains)), Sigma = K_strains))
@@ -118,7 +118,7 @@ eval_sim_h2_sommer_strainvar <- function(sim_h2_add_prop, h2_total,
                                          n_sims, n_per_strain, K_strains,  K_strains_fit = NULL,
                                          intercept = 0) {
   
-  if (!is.null(K_strains_fit)) { K_strains_fit <- K_strains }
+  if (is.null(K_strains_fit)) { K_strains_fit <- K_strains }
   
   u_add <- t(MASS::mvrnorm(n = n_sims, mu = rep(0, nrow(K_strains)), Sigma = K_strains))
   u_add <- u_add[rep(1:nrow(K_strains), each = n_per_strain),]
