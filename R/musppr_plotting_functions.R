@@ -3,8 +3,8 @@
 #' This function ...
 #' 
 #' @export
-#' @examples make_ccrix_grid()
-make_ccrix_grid <- function(cc_strains,
+#' @examples plot_ccrix_grid()
+plot_ccrix_grid <- function(cc_strains,
                             ccrix_set,
                             low = "white",
                             high = "black", 
@@ -166,7 +166,7 @@ plot_chromatid <- function(intervals,
 #' This function ...
 #' 
 #' @export
-#' @examples plot_founder_chromosomes(col = qtl2::CColors[1], width = 0.15, gap = 0.3)
+#' @examples plot_founder_chromosomes(col = qtl2::CCcolors[1], width = 0.15, gap = 0.3)
 plot_founder_chromosomes <- function(col,
                                      width = 0.1,
                                      gap = 0.05,
@@ -203,7 +203,10 @@ plot_founder_chromosomes <- function(col,
 #' This function ...
 #' 
 #' @export
-#' @examples plot_cc_chromosomes(intervals = c(0, sort(runif(n = 15, min = 0, max = 1)), 1), col = sample(qtl2::CColors, 16, replace = TRUE), width = 0.15, gap = 0.3
+#' @examples 
+#' set.seed(10)
+#' plot_cc_chromosomes(intervals = c(0, sort(runif(n = 15, min = 0, max = 1)), 1), 
+#'                     col = sample(qtl2::CCcolors, 16, replace = TRUE), width = 0.15, gap = 0.3)
 plot_cc_chromosomes <- function(intervals, 
                                 cols,
                                 width = 0.1,
@@ -242,8 +245,15 @@ plot_cc_chromosomes <- function(intervals,
 #' 
 #' @export
 #' @examples 
-#' plot_do_chromosomes(c(0, sort(runif(15, 0, 1)), 1), c(0, sort(runif(15, 0, 1)), 1), cols1 = sample(cc_col, 16, replace = TRUE), cols2 = sample(cc_col, 16, replace = TRUE), width = 0.15, gap = 0.3) ## CC-RIX
-#' plot_do_chromosomes(c(0, sort(runif(50, 0, 1)), 1), c(0, sort(runif(50, 0, 1)), 1), cols1 = sample(cc_col, 51, replace = TRUE), cols2 = sample(cc_col, 51, replace = TRUE), width = 0.15, gap = 0.3) ## DO
+#' set.seed(10)
+#' ## CC-RIX
+#' plot_do_chromosomes(c(0, sort(runif(15, 0, 1)), 1), c(0, sort(runif(15, 0, 1)), 1), 
+#'                     cols1 = sample(qtl2::CCcolors, 16, replace = TRUE), 
+#'                     cols2 = sample(qtl2::CCcolors, 16, replace = TRUE), width = 0.15, gap = 0.3)
+#' ## DO
+#' plot_do_chromosomes(c(0, sort(runif(50, 0, 1)), 1), c(0, sort(runif(50, 0, 1)), 1), 
+#'                     cols1 = sample(qtl2::CCcolors, 51, replace = TRUE), 
+#'                     cols2 = sample(qtl2::CCcolors, 51, replace = TRUE), width = 0.15, gap = 0.3)
 plot_do_chromosomes <- function(intervals1,
                                 intervals2,
                                 cols1,
