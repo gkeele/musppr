@@ -23,7 +23,7 @@ eval_sim_h2 <- function(sim_h2, n, K, K_fit = NULL,
     fit_sommer <- function(sim_y, i, K) {
       
       fit <- sommer::mmer(y ~ 1,
-                          random = ~vs(id, Gu = K),
+                          random = ~ sommer::vs(id, Gu = K),
                           rcov = ~ units, 
                           data = data.frame(y = sim_y[,i], id = rownames(sim_y)),
                           verbose = FALSE)
@@ -70,7 +70,7 @@ eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains, K_str
     fit_sommer <- function(sim_y, i, K) {
       
       fit <- sommer::mmer(y ~ 1,
-                          random = ~vs(strain, Gu = K),
+                          random = ~ sommer::vs(strain, Gu = K),
                           rcov = ~ units, 
                           data = data.frame(y = sim_y[,i], 
                                             id = rownames(sim_y), 
@@ -132,7 +132,7 @@ eval_sim_h2_sommer_strainvar <- function(sim_h2_add_prop, h2_total,
   fit_sommer <- function(sim_y, i, K) {
     
     fit <- sommer::mmer(y ~ 1,
-                        random = ~vs(strain, Gu = K) + strain,
+                        random = ~ sommer::vs(strain, Gu = K) + strain,
                         rcov = ~ units, 
                         data = data.frame(y = sim_y[,i], 
                                           id = rownames(sim_y), 
