@@ -4,10 +4,11 @@
 #' 
 #' @export
 #' @examples eval_sim_h2()
-eval_sim_h2 <- function(sim_h2, n, K, 
+eval_sim_h2 <- function(sim_h2, n, K, K_fit = NULL,
                         intercept = 0,
                         method = c("qtl2", "sommer", "miqtl")) {
   
+  if (!is.null(K_fit)) { K_fit <- K }
   method <- method[1]
   
   ## Simulation
@@ -17,7 +18,7 @@ eval_sim_h2 <- function(sim_h2, n, K,
   rownames(y) <- rownames(K)
   
   if (method == "qtl2") {
-    h2 <- qtl2::est_herit(pheno = y, kinship = K)
+    h2 <- qtl2::est_herit(pheno = y, kinship = K_fit)
   } else if (method == "sommer") {
     fit_sommer <- function(sim_y, i, K) {
       
@@ -30,9 +31,9 @@ eval_sim_h2 <- function(sim_h2, n, K,
       h2$Estimate
     }
     
-    h2 <- sapply(1:n, function(i) fit_sommer(sim_y = y, i = i, K = K))
+    h2 <- sapply(1:n, function(i) fit_sommer(sim_y = y, i = i, K = K_fit))
   } else if (method == "miqtl") {
-    eigen.K <- eigen(K)
+    eigen.K <- eigen(K_fit)
     fit_miqt <- function(sim_y, i, K, eigen.K) {
       
       fit <- miqtl::lmmbygls(y ~ 1, 
@@ -40,7 +41,7 @@ eval_sim_h2 <- function(sim_h2, n, K,
                              K = K, eigen.K = eigen.K, use.par = "h2.REML")
       fit$h2
     }
-    h2 <- sapply(1:n, function(i) fit_miqt(sim_y = y, i = i, K = K, eigen.K = eigen.K))
+    h2 <- sapply(1:n, function(i) fit_miqt(sim_y = y, i = i, K = K_fit, eigen.K = eigen.K))
   }
   
   h2
@@ -52,9 +53,10 @@ eval_sim_h2 <- function(sim_h2, n, K,
 #' 
 #' @export
 #' @examples eval_sim_h2_with_reps()
-eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains,
+eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains, K_strains_fit = NULL,
                                   intercept = 0, method = c("sommer", "miqtl")) {
   
+  if (!is.null(K_strains_fit)) { K_strains_fit <- K_strains }
   method <- method[1]
   
   u <- t(MASS::mvrnorm(n = n_sims, mu = rep(0, nrow(K_strains)), Sigma = K_strains))
@@ -81,7 +83,7 @@ eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains,
       h2$Estimate
     }
     
-    h2 <- sapply(1:n_sims, function(i) fit_sommer(sim_y = y, i = i, K = K_strains))
+    h2 <- sapply(1:n_sims, function(i) fit_sommer(sim_y = y, i = i, K = K_strains_fit))
   } else if (method == "miqtl") {
     ind_to_strain_data <- data.frame(SUBJECT.NAME = rownames(y), 
                                      strain = gsub(x = rownames(y), 
@@ -89,7 +91,7 @@ eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains,
                                                    replacement = ""))
     Z <- model.matrix(miqtl:::process.random.formula(geno.id = "strain"), 
                       data = ind_to_strain_data)
-    K_ind <- Z %*% tcrossprod(K_strains, Z)
+    K_ind <- Z %*% tcrossprod(K_strains_fit, Z)
     rownames(K_ind) <- colnames(K_ind) <- as.character(ind_to_strain_data[,"SUBJECT.NAME"])
     eigen.K <- eigen(K_ind)
     
@@ -113,8 +115,10 @@ eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains,
 #' @export
 #' @examples eval_sim_h2_sommer_strainvar()
 eval_sim_h2_sommer_strainvar <- function(sim_h2_add_prop, h2_total,
-                                         n_sims, n_per_strain, K_strains,
+                                         n_sims, n_per_strain, K_strains,  K_strains_fit = NULL,
                                          intercept = 0) {
+  
+  if (!is.null(K_strains_fit)) { K_strains_fit <- K_strains }
   
   u_add <- t(MASS::mvrnorm(n = n_sims, mu = rep(0, nrow(K_strains)), Sigma = K_strains))
   u_add <- u_add[rep(1:nrow(K_strains), each = n_per_strain),]
@@ -141,7 +145,7 @@ eval_sim_h2_sommer_strainvar <- function(sim_h2_add_prop, h2_total,
     c(h2_add$Estimate, h2_strain$Estimate)
   }
   
-  h2 <- t(sapply(1:n_sims, function(i) fit_sommer(sim_y = y, i = i, K = K_strains), simplify = "array"))
+  h2 <- t(sapply(1:n_sims, function(i) fit_sommer(sim_y = y, i = i, K = K_strains_fit), simplify = "array"))
   h2
 }
 

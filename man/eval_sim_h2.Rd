@@ -4,7 +4,14 @@
 \alias{eval_sim_h2}
 \title{Simulate data and evaluate heritability estimation}
 \usage{
-eval_sim_h2(sim_h2, n, K, intercept = 0, method = c("qtl2", "sommer", "miqtl"))
+eval_sim_h2(
+  sim_h2,
+  n,
+  K,
+  K_fit = NULL,
+  intercept = 0,
+  method = c("qtl2", "sommer", "miqtl")
+)
 }
 \description{
 This function ...

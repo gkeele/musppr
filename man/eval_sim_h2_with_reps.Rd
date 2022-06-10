@@ -9,6 +9,7 @@ eval_sim_h2_with_reps(
   n_sims,
   n_per_strain,
   K_strains,
+  K_strains_fit = NULL,
   intercept = 0,
   method = c("sommer", "miqtl")
 )
