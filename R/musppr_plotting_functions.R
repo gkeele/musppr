@@ -63,6 +63,7 @@ plot_ccrix_grid <- function(cc_strains,
 #' @export
 #' @examples plot_genome_scan()
 plot_genome_scan <- function(qtl_scan,
+                             lodcolumn = 1,
                              med_scan = NULL,
                              med_highlight_dat = NULL,
                              map,
@@ -93,7 +94,7 @@ plot_genome_scan <- function(qtl_scan,
   if (!is.null(my_y_max)) {
     y_max <- max(y_max, my_y_max)
   }
-  plot(qtl_scan, map, 
+  plot(qtl_scan, map, lodcolumn,
        ylim = c(0, y_max), 
        bgcolor = bgcolor, 
        altbgcolor = altbgcolor, 

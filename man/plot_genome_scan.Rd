@@ -6,6 +6,7 @@
 \usage{
 plot_genome_scan(
   qtl_scan,
+  lodcolumn = 1,
   med_scan = NULL,
   med_highlight_dat = NULL,
   map,
