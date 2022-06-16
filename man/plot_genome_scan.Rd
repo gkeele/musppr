@@ -17,7 +17,7 @@ plot_genome_scan(
   color = "cadetblue",
   altcolor = "cadetblue",
   medcol = "gray90",
-  outlinecol = "black",
+  outlinecol = NA,
   hline = NULL,
   annot_dat,
   target_symbol = NULL,
