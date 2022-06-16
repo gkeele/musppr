@@ -106,7 +106,7 @@ plot_genome_scan <- function(qtl_scan,
   j <- 1
   for (i in chr) {
     x <- xpos_scan1(map = map, thepos = map_df %>% filter(chr == i) %>% pull(pos), thechr = map_df %>% filter(chr == i) %>% pull(chr), gap = 0, chr = chr)
-    y <- qtl_scan[map_df %>% filter(chr == i) %>% pull(marker),]
+    y <- qtl_scan[map_df %>% filter(chr == i) %>% pull(marker), lodcolumn]
     polygon(x = c(x[1], x, x[length(x)]),
             y = c(0, y, 0), 
             border = NA,
