@@ -56,6 +56,114 @@ plot_ccrix_grid <- function(cc_strains,
   g
 }
 
+#' Genome scan plot
+#'
+#' This function ...
+#' 
+#' @export
+#' @examples plot_genome_scan()
+plot_genome_scan <- function(qtl_scan,
+                             med_scan = NULL,
+                             med_highlight_dat = NULL,
+                             map,
+                             bgcolor = "white",
+                             altbgcolor = "white",
+                             bgcolor_alpha = 0.6,
+                             altbgcolor_alpha = 0.6,
+                             color,
+                             altcolor,
+                             medcol = "gray90",
+                             outlinecol = "black",
+                             hline = NULL,
+                             annot_dat,
+                             target_symbol = NULL,
+                             chr = c(1:19, "X"),
+                             main = "",
+                             my_y_max = NULL,
+                             rug_col = "black") {
+  
+  include_chr <- chr
+  if (is.null(med_scan)) {
+    y_max <- max(qtl_scan)
+  } else {
+    med_scan <- med_scan %>% 
+      filter(chr %in% chr)
+    y_max <- max(c(qtl_scan, med_scan$lod))
+  }
+  if (!is.null(my_y_max)) {
+    y_max <- max(y_max, my_y_max)
+  }
+  plot(qtl_scan, map, 
+       ylim = c(0, y_max), 
+       bgcolor = bgcolor, 
+       altbgcolor = altbgcolor, 
+       col = "white", 
+       gap = 0,
+       chr = chr,
+       main = main)
+  map_df <- map_list_to_df(map)
+  j <- 1
+  for (i in chr) {
+    x <- xpos_scan1(map = map, thepos = map_df %>% filter(chr == i) %>% pull(pos), thechr = map_df %>% filter(chr == i) %>% pull(chr), gap = 0, chr = chr)
+    y <- qtl_scan[map_df %>% filter(chr == i) %>% pull(marker),]
+    polygon(x = c(x[1], x, x[length(x)]),
+            y = c(0, y, 0), 
+            border = NA,
+            col = ifelse(j %% 2 != 0, 
+                         scales::alpha(color, bgcolor_alpha), 
+                         scales::alpha(altcolor, altbgcolor_alpha)))
+    j <- j + 1
+  }
+  if (!is.null(med_scan)) {
+    points(x = qtl2::xpos_scan1(map, 
+                                thechr = med_scan$chr, 
+                                thepos = med_scan$pos, 
+                                gap = 0,
+                                chr = chr), 
+           y = med_scan$lod,
+           col = medcol, 
+           pch = 20)
+  }
+  
+  plot(qtl_scan, map, 
+       ylim = c(0, y_max), 
+       bgcolor = bgcolor, 
+       altbgcolor = altbgcolor, 
+       col = outlinecol, 
+       lwd = 0.5,
+       gap = 0,
+       add = TRUE,
+       chr = chr)
+  if (!is.null(med_highlight_dat)) {
+    for (i in 1:nrow(med_highlight_dat)) {
+      points(x = qtl2::xpos_scan1(map, 
+                                  thechr = med_scan %>% filter(symbol == med_highlight_dat$symbol[i]) %>% pull(chr), 
+                                  thepos = med_scan %>% filter(symbol == med_highlight_dat$symbol[i]) %>% pull(pos), 
+                                  gap = 0,
+                                  chr = chr), 
+             y = med_scan %>% filter(symbol == med_highlight_dat$symbol[i]) %>% pull(lod),
+             col = med_highlight_dat$col[i], 
+             bg = med_highlight_dat$bgcol[i],
+             cex = med_highlight_dat$cex[i],
+             pch = med_highlight_dat$pch[i])
+    }
+  }
+  if (!is.null(target_symbol)) {
+    for (i in 1:length(target_symbol)) {
+      rug(x = qtl2::xpos_scan1(map, 
+                               thechr = annot_dat %>% filter(symbol == target_symbol[i]) %>% pull(chr),
+                               thepos = annot_dat %>% filter(symbol == target_symbol[i]) %>% pull(middle),
+                               gap = 0,
+                               chr = chr),
+          col = rug_col,
+          lwd = 3)
+    }
+  }
+  if (!is.null(hline)) {
+    abline(h = hline, lty = 2)
+  }
+}
+
 pull_half_circle_coord <- function(width, 
                                    x_center = NULL,
                                    y_center = 0,
@@ -286,4 +394,6 @@ plot_do_chromosomes <- function(intervals1,
                  border_lwd = border_lwd,
                  end_type = end_type)
 }
+
+
 
