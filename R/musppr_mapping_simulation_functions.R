@@ -24,12 +24,11 @@ sim_mpp_data <- function (genoprobs, map, K = NULL, samples = NULL,
                            kinship_effect_size = kinship_effect_size)
   noise_effect_size <- 1 - qtl_effect_size - strain_effect_size - kinship_effect_size
   noise_effect_size <- noise_effect_size/num_replicates
-  scale_factor <- 1/sum(c(qtl_effect_size, strain_effect_size, kinship_effect_size, noise_effect_size))
+  scale_factor <- (1 - noise_effect_size)/sum(c(qtl_effect_size, strain_effect_size, kinship_effect_size))
   qtl_effect_size <- scale_factor * qtl_effect_size
   strain_effect_size <- scale_factor * strain_effect_size
   kinship_effect_size <- scale_factor * kinship_effect_size
-  noise_effect_size <- scale_factor * noise_effect_size
-  
+
   map_df <- map_list_to_df(map)
   
   if (!is.null(beta)) {
