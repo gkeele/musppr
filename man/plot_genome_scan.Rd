@@ -20,7 +20,7 @@ plot_genome_scan(
   outlinecol = NA,
   hlines_col = "gray",
   hlines_lwd = 0.5,
-  add_hline = NULL,
+  added_hline = NULL,
   annot_dat,
   target_symbol = NULL,
   chr = c(1:19, "X"),

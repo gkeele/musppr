@@ -77,7 +77,7 @@ plot_genome_scan <- function(qtl_scan,
                              outlinecol = NA,
                              hlines_col = "gray",
                              hlines_lwd = 0.5,
-                             add_hline = NULL,
+                             added_hline = NULL,
                              annot_dat,
                              target_symbol = NULL,
                              chr = c(1:19, "X"),
@@ -167,8 +167,8 @@ plot_genome_scan <- function(qtl_scan,
           lwd = 3)
     }
   }
-  if (!is.null(hline)) {
-    abline(h = hline, lty = 2)
+  if (!is.null(added_hline)) {
+    abline(h = added_hline, lty = 2)
   }
 }
 
