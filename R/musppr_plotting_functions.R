@@ -69,8 +69,8 @@ plot_genome_scan <- function(qtl_scan,
                              map,
                              bgcolor = "white",
                              altbgcolor = "white",
-                             bgcolor_alpha = 0.6,
-                             altbgcolor_alpha = 0.6,
+                             color_alpha = 0.6,
+                             altcolor_alpha = 0.6,
                              color = "cadetblue",
                              altcolor = "cadetblue",
                              medcol = "gray90",
@@ -115,8 +115,8 @@ plot_genome_scan <- function(qtl_scan,
             y = c(0, y, 0), 
             border = NA,
             col = ifelse(j %% 2 != 0, 
-                         scales::alpha(color, bgcolor_alpha), 
-                         scales::alpha(altcolor, altbgcolor_alpha)))
+                         scales::alpha(color, color_alpha), 
+                         scales::alpha(altcolor, altcolor_alpha)))
     j <- j + 1
   }
   if (!is.null(med_scan)) {
