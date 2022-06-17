@@ -6,8 +6,8 @@
 \usage{
 plot_founder_chromosomes(
   col,
-  width = 0.1,
-  gap = 0.05,
+  width = 0.15,
+  gap = 0.3,
   y_shift = NULL,
   x_shift = 0,
   add_border = TRUE,
