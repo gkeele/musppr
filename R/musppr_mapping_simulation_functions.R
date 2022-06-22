@@ -299,10 +299,10 @@ run_parboot <- function(qtl_table, sim_data, genoprobs,
   }
   
   results_dat <- results_dat %>%
-    dplyr::rowwise %>%
+    dplyr::rowwise() %>%
     dplyr::mutate(covered = true_chr == chr & true_pos >= ci_lo & true_pos <= ci_hi,
                   ci_width = ci_hi - ci_lo) %>%
-    dplyr::ungroup
+    dplyr::ungroup()
   
   results_dat
 }
@@ -363,10 +363,10 @@ run_subsample <- function(qtl_table, sim_data, genoprobs,
   }
   
   results_dat <- results_dat %>%
-    dplyr::rowwise %>%
+    dplyr::rowwise() %>%
     dplyr::mutate(covered = true_chr == chr & true_pos >= ci_lo & true_pos <= ci_hi,
                   ci_width = ci_hi - ci_lo) %>%
-    dplyr::ungroup
+    dplyr::ungroup()
   
   results_dat
 }
@@ -403,10 +403,10 @@ eval_mapping_results <- function(thresh = seq(6, 9, by = 0.5),
         dplyr::left_join(true_qtl %>%
                            dplyr::rename(true_chr = chr,
                                          true_pos = pos)) %>%
-        dplyr::rowwise %>%
+        dplyr::rowwise() %>%
         dplyr::mutate(ci_width = ci_hi - ci_lo,
                       covered = true_chr == chr & true_pos >= ci_lo & true_pos <= ci_hi) %>%
-        dplyr::ungroup
+        dplyr::ungroup()
       
       detection_rate <- sum(detected_qtl$covered)/nrow(true_qtl)
       true_positive_rate <- sum(detected_qtl$covered)/nrow(detected_qtl)
