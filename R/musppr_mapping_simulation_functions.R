@@ -450,7 +450,7 @@ eval_null_mapping_results <- function(thresh = seq(6, 10, by = 0.5), scans, map)
   for (i in 1:length(thresh)) {
     count_dat <- dplyr::bind_rows(count_dat,
                                   data.frame(thresh = thresh[i], 
-                                             count = lod_peaks %>%
+                                             count = lodpeaks %>%
                                                dplyr::filter(lod > thresh[i]) %>%
                                                nrow))
   }
