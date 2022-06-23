@@ -6,7 +6,8 @@
 #' @examples sim_mpp_data()
 sim_mpp_data <- function (genoprobs, map, K = NULL, samples = NULL,
                           qtl_effect_size = 0.1, strain_effect_size = 0, kinship_effect_size = 0.1,
-                          locus = NULL, vary_locus = TRUE, num_replicates = 1, num_sim = 1, 
+                          locus = NULL, vary_locus = TRUE, 
+                          num_replicates = 1, num_sim = 1, 
                           M_ID = NULL, sample_method = c("uniform", "crp"), num_alleles = 8, 
                           scale_type = c("sample", "balanced"),
                           num_founders = 8, beta = NULL, sim_label = "sim_y") {
@@ -37,17 +38,14 @@ sim_mpp_data <- function (genoprobs, map, K = NULL, samples = NULL,
   loci <- unlist(lapply(genoprobs, function(x) dimnames(x)[[3]]))
   if (is.null(locus)) {
     locus <- sample(loci, size = ifelse(vary_locus, num_sim, 1), replace = TRUE)
-    if (vary_locus) {
-      locus_index <- 1:num_sim
-    }
-    else {
-      locus_index <- rep(1, num_sim)
-    }
+  }
+  if (vary_locus) {
+    locus_index <- 1:num_sim
   }
   else {
-    vary_locus <- FALSE
     locus_index <- rep(1, num_sim)
   }
+  
   M <- NULL
   if (!is.null(M_ID)) {
     M <- model_matrix_from_ID(M_ID)
