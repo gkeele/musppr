@@ -218,48 +218,23 @@ model_matrix_from_ID <- function (M_ID) {
 #' @examples run_parboot()
 run_parboot <- function(qtl_table, sim_data, genoprobs, 
                         K, map, num_samples = 100,
-                        prob = seq(0.8, 0.99, by = 0.01),
-                        ignore_u = TRUE) {
+                        prob = seq(0.8, 0.99, by = 0.01)) {
   
   results_dat <- NULL
   for (i in 1:nrow(qtl_table)) {
     this_locus <- genoprobs[[qtl_table$chr[i]]][rownames(sim_data),,qtl_table$locus[i]]
     this_K <- K[[qtl_table$chr[i]]][rownames(sim_data), rownames(sim_data)]
-    if (!ignore_u) {
-      h2_fit <- est_herit(pheno = sim_data[,qtl_table$lodcolumn[i]], 
-                          kinship = this_K, 
-                          reml = TRUE)
-      locus_fit <- fit1(pheno = sim_data[,qtl_table$lodcolumn[i]], 
-                        kinship = this_K, 
-                        genoprobs = this_locus,
-                        hsq = h2_fit)
+    
+    locus_fit <- fit1(pheno = sim_data[,qtl_table$lodcolumn[i]], 
+                      kinship = this_K, 
+                      genoprobs = this_locus)
       
-      varsum <- mean(locus_fit$fitted^2)
-      tau2 <- h2_fit * varsum
-      if (tau2 == 0) {
-        sigma2 <- varsum
-      } else {
-        sigma2 <- (1 - h2_fit)/h2_fit
-      }
-      u <- t(MASS::mvrnorm(n = num_samples, mu = rep(0, nrow(this_K)), Sigma = this_K*tau2))
-      e <- sapply(1:num_samples, function(i) rnorm(n = nrow(this_K), mean = 0, sd = sqrt(sigma2)))
-    } else {
-      locus_fit <- fit1(pheno = sim_data[,qtl_table$lodcolumn[i]], 
-                        kinship = this_K, 
-                        genoprobs = this_locus,
-                        hsq = NULL)
-      sigma2 <- mean(locus_fit$fitted^2)
-      u <- matrix(0, nrow = nrow(sim_data), ncol = num_samples)
-      e <- sapply(1:num_samples, function(i) rnorm(n = nrow(sim_data), mean = 0, sd = sqrt(sigma2)))
-      this_K <- NULL
-    }
-    
-    keep <- !is.na(locus_fit$coef)
-    X <- cbind(this_locus, rep(1, nrow(this_locus)))[,keep]
-    Xb <- matrix(X %*% locus_fit$coef[keep], ncol = 1)
+    sigma2 <- mean(locus_fit$resid^2) * (nrow(sim_data)/(nrow(sim_data) - 7))
+    Xb <- matrix(locus_fit$fitted, ncol = 1)
     Xb <- Xb[,rep(1, num_samples)]
+    e <- sapply(1:num_samples, function(i) rnorm(n = nrow(sim_data), mean = 0, sd = sqrt(sigma2)))
     
-    y_bs <- Xb + u + e
+    y_bs <- Xb + e
     rownames(y_bs) <- rownames(sim_data)
     colnames(y_bs) <- paste("bs_y", 1:num_samples, sep = "_")
 
@@ -273,10 +248,79 @@ run_parboot <- function(qtl_table, sim_data, genoprobs,
     
     bs_scans <- qtl2::scan1(genoprobs = reduced_genoprobs,
                             pheno = y_bs, 
-                            kinship = this_K)
+                            kinship = NULL)
     peak_markers <- apply(bs_scans, 2, function(x) rownames(bs_scans)[which.max(x)])
     peak_pos <- map[[qtl_table$chr[i]]][peak_markers]
 
+    ci_lo <- quantile(peak_pos, prob = (1 - prob)/2)
+    ci_hi <- quantile(peak_pos, prob = prob + (1 - prob)/2)
+    
+    results_dat <- dplyr::bind_rows(results_dat,
+                                    data.frame(lodcolumn = qtl_table$lodcolumn[i],
+                                               chr = qtl_table$chr[i],
+                                               pos = qtl_table$pos[i],
+                                               lod = qtl_table$lod[i],
+                                               locus = qtl_table$locus[i],
+                                               true_locus = qtl_table$true_locus[i],
+                                               true_chr = qtl_table$true_chr[i],
+                                               true_pos = qtl_table$true_pos[i],
+                                               prob = prob,
+                                               ci_lo = ci_lo,
+                                               ci_hi = ci_hi))
+    
+    print(paste("Locus", i, "out of", nrow(qtl_table), "done!", collapse = " "))
+  }
+  
+  results_dat <- results_dat %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(covered = true_chr == chr & true_pos >= ci_lo & true_pos <= ci_hi,
+                  ci_width = ci_hi - ci_lo) %>%
+    dplyr::ungroup()
+  
+  results_dat
+}
+
+#' Run scans of parametric permutation samples to estimate a positional confidence interval for a QTL
+#'
+#' This function ...
+#' 
+#' @export
+#' @examples run_parperm()
+run_parperm <- function(qtl_table, sim_data, genoprobs, 
+                        K, map, num_samples = 100,
+                        prob = seq(0.8, 0.99, by = 0.01)) {
+  
+  results_dat <- NULL
+  for (i in 1:nrow(qtl_table)) {
+    this_locus <- genoprobs[[qtl_table$chr[i]]][rownames(sim_data),,qtl_table$locus[i]]
+    this_K <- K[[qtl_table$chr[i]]][rownames(sim_data), rownames(sim_data)]
+    
+    locus_fit <- fit1(pheno = sim_data[,qtl_table$lodcolumn[i]], 
+                      kinship = this_K, 
+                      genoprobs = this_locus)
+    
+    Xb <- matrix(locus_fit$fitted, ncol = 1)
+    Xb <- Xb[,rep(1, num_samples)]
+    e <- sapply(1:num_samples, function(i) sample(locus_fit$resid))
+    
+    y_perm <- Xb + e
+    rownames(y_perm) <- rownames(sim_data)
+    colnames(y_perm) <- paste("perm_y", 1:num_samples, sep = "_")
+    
+    reduced_genoprobs <- list(genoprobs[[qtl_table$chr[i]]])
+    names(reduced_genoprobs) <- qtl_table$chr[i]
+    attr(reduced_genoprobs, "is_x_chr") <- attr(genoprobs, "is_x_chr")[qtl_table$chr[i]]
+    attr(reduced_genoprobs, "crosstype") <- attr(genoprobs, "crosstype")
+    attr(reduced_genoprobs, "alleles") <- attr(genoprobs, "alleles")
+    attr(reduced_genoprobs, "alleleprobs") <- attr(genoprobs, "alleleprobs")
+    attr(reduced_genoprobs, "class") <- attr(genoprobs, "class")
+    
+    perm_scans <- qtl2::scan1(genoprobs = reduced_genoprobs,
+                              pheno = y_perm, 
+                              kinship = NULL)
+    peak_markers <- apply(perm_scans, 2, function(x) rownames(perm_scans)[which.max(x)])
+    peak_pos <- map[[qtl_table$chr[i]]][peak_markers]
+    
     ci_lo <- quantile(peak_pos, prob = (1 - prob)/2)
     ci_hi <- quantile(peak_pos, prob = prob + (1 - prob)/2)
     
@@ -476,7 +520,6 @@ eval_mapping_parboot_results <- function(thresh = seq(6, 9, by = 0.5),
       detected_qtl <- parboot_results %>%
         dplyr::filter(lod > thresh[i],
                       prob == prob[j])
-      
       detection_rate <- sum(detected_qtl$covered)/num_true_qtl
       true_positive_rate <- sum(detected_qtl$covered)/nrow(detected_qtl)
       false_positive_rate <- sum(!detected_qtl$covered)/nrow(detected_qtl)
