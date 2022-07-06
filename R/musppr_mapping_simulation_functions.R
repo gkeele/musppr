@@ -280,6 +280,80 @@ run_parboot <- function(qtl_table, sim_data, genoprobs,
   results_dat
 }
 
+#' Run scans of Bayesian bootstrap samples to estimate a positional confidence interval for a QTL
+#'
+#' This function ...
+#' 
+#' @export
+#' @examples run_bayesboot()
+run_bayesboot <- function(qtl_table, sim_data, genoprobs, 
+                          K, map, num_samples = 100,
+                          prob = seq(0.8, 0.99, by = 0.01)) {
+  
+  ## Sampling weights
+  n <- nrow(sim_data)
+  weight_matrix <- matrix(NA, nrow = n, ncol = num_samples)
+  for(i in 1:num_samples){
+    random_num <- sort(runif(n - 1, min = 0, max = 1))
+    random_num[n] <- 1
+    weights <- c(random_num[1], diff(random_num))
+    weight_matrix[,i] <- weights * n
+  }
+  rownames(weight_matrix) <- rownames(sim_data)
+  
+  results_dat <- NULL
+  for (i in 1:nrow(qtl_table)) {
+    this_locus <- genoprobs[[qtl_table$chr[i]]][rownames(sim_data),,qtl_table$locus[i]]
+    this_K <- K[[qtl_table$chr[i]]][rownames(sim_data), rownames(sim_data)]
+    
+    reduced_genoprobs <- list(genoprobs[[qtl_table$chr[i]]])
+    names(reduced_genoprobs) <- qtl_table$chr[i]
+    attr(reduced_genoprobs, "is_x_chr") <- attr(genoprobs, "is_x_chr")[qtl_table$chr[i]]
+    attr(reduced_genoprobs, "crosstype") <- attr(genoprobs, "crosstype")
+    attr(reduced_genoprobs, "alleles") <- attr(genoprobs, "alleles")
+    attr(reduced_genoprobs, "alleleprobs") <- attr(genoprobs, "alleleprobs")
+    attr(reduced_genoprobs, "class") <- attr(genoprobs, "class")
+    
+    scans <- matrix(NA, nrow = dim(reduced_genoprobs[[1]])[3], ncol = num_samples)
+    for (j in 1:num_samples) {
+      scans[,j] <- qtl2::scan1(genoprobs = reduced_genoprobs,
+                               pheno = sim_data[, i, drop = FALSE], 
+                               kinship = NULL, ## weights argument does not seem to work when kinship is included
+                               weights = weight_matrix[,j])
+    }
+    rownames(scans) <- dimnames(reduced_genoprobs[[1]])[[3]]
+    
+    peak_markers <- apply(scans, 2, function(x) rownames(scans)[which.max(x)])
+    peak_pos <- map[[qtl_table$chr[i]]][peak_markers]
+    
+    ci_lo <- quantile(peak_pos, prob = (1 - prob)/2)
+    ci_hi <- quantile(peak_pos, prob = prob + (1 - prob)/2)
+    
+    results_dat <- dplyr::bind_rows(results_dat,
+                                    data.frame(lodcolumn = qtl_table$lodcolumn[i],
+                                               chr = qtl_table$chr[i],
+                                               pos = qtl_table$pos[i],
+                                               lod = qtl_table$lod[i],
+                                               locus = qtl_table$locus[i],
+                                               true_locus = qtl_table$true_locus[i],
+                                               true_chr = qtl_table$true_chr[i],
+                                               true_pos = qtl_table$true_pos[i],
+                                               prob = prob,
+                                               ci_lo = ci_lo,
+                                               ci_hi = ci_hi))
+    
+    print(paste("Locus", i, "out of", nrow(qtl_table), "done!", collapse = " "))
+  }
+  
+  results_dat <- results_dat %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(covered = true_chr == chr & true_pos >= ci_lo & true_pos <= ci_hi,
+                  ci_width = ci_hi - ci_lo) %>%
+    dplyr::ungroup()
+  
+  results_dat
+}
+
 #' Run scans of parametric permutation samples to estimate a positional confidence interval for a QTL
 #'
 #' This function ...
@@ -349,7 +423,85 @@ run_parperm <- function(qtl_table, sim_data, genoprobs,
   results_dat
 }
 
-#' Run scabs if subsamples of data to estimate a positional confidence interval for a QTL
+#' Run scans of parametric permutation samples (with the kinship matrix) to estimate a positional confidence interval for a QTL
+#'
+#' This function ...
+#' 
+#' @export
+#' @examples run_parperm_kinship()
+run_parperm_kinship <- function(qtl_table, sim_data, genoprobs, 
+                                K, map, num_samples = 100,
+                                prob = seq(0.8, 0.99, by = 0.01)) {
+  
+  n <- nrow(sim_data)
+  e_index <- sapply(1:num_samples, function(i) sample(1:n))
+  results_dat <- NULL
+  for (i in 1:nrow(qtl_table)) {
+    this_locus <- genoprobs[[qtl_table$chr[i]]][rownames(sim_data),,qtl_table$locus[i]]
+    this_K <- K[[qtl_table$chr[i]]][rownames(sim_data), rownames(sim_data)]
+    
+    locus_fit <- fit1(pheno = sim_data[,qtl_table$lodcolumn[i]], 
+                      kinship = this_K, 
+                      genoprobs = this_locus)
+    
+    Xb <- matrix(locus_fit$fitted, ncol = 1)
+    Xb <- Xb[,rep(1, num_samples)]
+    e <- sapply(1:num_samples, function(i) locus_fit$resid[e_index[,i]])
+    
+    y_perm <- Xb + e
+    rownames(y_perm) <- rownames(sim_data)
+    colnames(y_perm) <- paste("perm_y", 1:num_samples, sep = "_")
+    
+    reduced_genoprobs <- list(genoprobs[[qtl_table$chr[i]]])
+    names(reduced_genoprobs) <- qtl_table$chr[i]
+    attr(reduced_genoprobs, "is_x_chr") <- attr(genoprobs, "is_x_chr")[qtl_table$chr[i]]
+    attr(reduced_genoprobs, "crosstype") <- attr(genoprobs, "crosstype")
+    attr(reduced_genoprobs, "alleles") <- attr(genoprobs, "alleles")
+    attr(reduced_genoprobs, "alleleprobs") <- attr(genoprobs, "alleleprobs")
+    attr(reduced_genoprobs, "class") <- attr(genoprobs, "class")
+    
+    perm_scans <- matrix(NA, nrow = dim(reduced_genoprobs[[1]])[3], ncol = num_samples)
+    for (j in 1:num_samples) {
+      perm_K <- this_K[rownames(this_K)[e_index[,j]], rownames(this_K)[e_index[,j]]]
+      rownames(perm_K) <- colnames(perm_K) <- rownames(this_K)
+      perm_scans[,j] <- qtl2::scan1(genoprobs = reduced_genoprobs,
+                                    pheno = y_perm[, j, drop = FALSE], 
+                                    kinship = perm_K)
+    }
+    rownames(perm_scans) <- dimnames(reduced_genoprobs[[1]])[[3]]
+    
+    peak_markers <- apply(perm_scans, 2, function(x) rownames(perm_scans)[which.max(x)])
+    peak_pos <- map[[qtl_table$chr[i]]][peak_markers]
+    
+    ci_lo <- quantile(peak_pos, prob = (1 - prob)/2)
+    ci_hi <- quantile(peak_pos, prob = prob + (1 - prob)/2)
+    
+    results_dat <- dplyr::bind_rows(results_dat,
+                                    data.frame(lodcolumn = qtl_table$lodcolumn[i],
+                                               chr = qtl_table$chr[i],
+                                               pos = qtl_table$pos[i],
+                                               lod = qtl_table$lod[i],
+                                               locus = qtl_table$locus[i],
+                                               true_locus = qtl_table$true_locus[i],
+                                               true_chr = qtl_table$true_chr[i],
+                                               true_pos = qtl_table$true_pos[i],
+                                               prob = prob,
+                                               ci_lo = ci_lo,
+                                               ci_hi = ci_hi))
+    
+    print(paste("Locus", i, "out of", nrow(qtl_table), "done!", collapse = " "))
+  }
+  
+  results_dat <- results_dat %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(covered = true_chr == chr & true_pos >= ci_lo & true_pos <= ci_hi,
+                  ci_width = ci_hi - ci_lo) %>%
+    dplyr::ungroup()
+  
+  results_dat
+}
+
+#' Run scans of subsamples of data to estimate a positional confidence interval for a QTL
 #'
 #' This function ...
 #' 
