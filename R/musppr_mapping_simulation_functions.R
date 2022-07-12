@@ -695,4 +695,33 @@ eval_mapping_parboot_results <- function(thresh = seq(6, 9, by = 0.5),
   rate_dat
 }
 
+#' Pull FWER thresholds from maximum LOD scores
+#'
+#' This function ...
+#' 
+#' @export
+#' @examples pull_fwer_thresh()
+pull_fwer_thresh <- function(maxlod, 
+                             right_side = TRUE, 
+                             fwer = 0.05,
+                             use_gev = TRUE) {
+  
+  if (right_side) {
+    fwer <- 1 - fwer
+  }
+  if (use_gev) {
+    ## Fit GEV from maximum LODs of permutations
+    evd_pars <- evd::fgev(maxlod)$estimate
+    ## Pull threshold as quantile from GEV
+    thresh <- evd::qgev(p = fwer, 
+                        loc = evd_pars["loc"], 
+                        scale = evd_pars["scale"], 
+                        shape = evd_pars["shape"])
+  } else {
+    ## Pull empirical p-values from permutation maximum LOD scores
+    thresh <- quantile(maxlod, p = fwer)
+  }
+  
+  as.numeric(thresh)
+}
 
