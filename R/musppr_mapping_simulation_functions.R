@@ -611,19 +611,20 @@ eval_mapping_results <- function(thresh = seq(6, 9, by = 0.5),
       
       coverage_rate <- sum(reduced_qtl$covered)/nrow(reduced_qtl)
       mean_ci_width <- mean(reduced_qtl$ci_width)
+      median_ci_width <- median(reduced_qtl$ci_width)
       
       if (use_lod_drop) {
         rate_dat <- bind_rows(rate_dat,
                               data.frame(thresh = thresh[j], lod_drop = lod_drop[i],
                                          detection_rate = detection_rate, true_positive_rate = true_positive_rate,
                                          false_positive_rate = false_positive_rate, coverage_rate = coverage_rate,
-                                         mean_ci_width = mean_ci_width))
+                                         mean_ci_width = mean_ci_width, median_ci_width = median_ci_width))
       } else {
         rate_dat <- bind_rows(rate_dat,
                               data.frame(thresh = thresh[j], bci = bci[i],
                                          detection_rate = detection_rate, true_positive_rate = true_positive_rate,
                                          false_positive_rate = false_positive_rate, coverage_rate = coverage_rate,
-                                         mean_ci_width = mean_ci_width))
+                                         mean_ci_width = mean_ci_width, median_ci_width = median_ci_width))
       }
     }
   }
@@ -654,16 +655,16 @@ eval_null_mapping_results <- function(thresh = seq(6, 10, by = 0.5), scans, map)
   count_dat
 }
 
-#' Evaluate mapping performance when using parametric bootstrap performance
+#' Evaluate mapping performance when using sampling procedures, such as bootstraps
 #'
 #' This function ...
 #' 
 #' @export
-#' @examples eval_mapping_parboot_results()
-eval_mapping_parboot_results <- function(thresh = seq(6, 9, by = 0.5), 
-                                         prob = seq(0.8, 0.95, by = 0.01),
-                                         parboot_results, 
-                                         num_true_qtl) {
+#' @examples eval_mapping_sampling_results()
+eval_mapping_sampling_results <- function(thresh = seq(6, 9, by = 0.5), 
+                                          prob = seq(0.8, 0.95, by = 0.01),
+                                          parboot_results, 
+                                          num_true_qtl) {
   
   rate_dat <- NULL
   
@@ -676,6 +677,7 @@ eval_mapping_parboot_results <- function(thresh = seq(6, 9, by = 0.5),
       true_positive_rate <- sum(detected_qtl$covered)/nrow(detected_qtl)
       false_positive_rate <- sum(!detected_qtl$covered)/nrow(detected_qtl)
       mean_ci_width = mean(detected_qtl$ci_width)
+      median_ci_width = median(detected_qtl$ci_width)
       
       reduced_qtl <- detected_qtl %>%
         dplyr::filter(true_chr == chr & abs(true_pos - pos) < 20)
@@ -688,7 +690,8 @@ eval_mapping_parboot_results <- function(thresh = seq(6, 9, by = 0.5),
                                               true_positive_rate = true_positive_rate,
                                               false_positive_rate = false_positive_rate, 
                                               coverage_rate = coverage_rate,
-                                              mean_ci_width = mean_ci_width))
+                                              mean_ci_width = mean_ci_width,
+                                              median_ci_width = median_ci_width))
     }
   }
   
