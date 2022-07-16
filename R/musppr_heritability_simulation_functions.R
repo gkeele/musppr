@@ -149,4 +149,18 @@ eval_sim_h2_sommer_strainvar <- function(sim_h2_add_prop, h2_total,
   h2
 }
 
+#' Scale kinship matrix to average semivariance 
+#'
+#' This function ...
+#' 
+#' @export
+#' @examples make_Kasv()
+make_Kasv <- function(Z) {
+  
+  Kbar <- scale(Z, scale = FALSE) %*% t(scale(Z, scale = FALSE))
+  Kasv <- Kbar/(psych::tr(Kbar)/(nrow(Z) - 1))
+  rownames(Kasv) <- colnames(Kasv) <- rownames(Z)
+  Kasv
+}
+
 
