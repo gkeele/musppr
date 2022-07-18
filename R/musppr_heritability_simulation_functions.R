@@ -44,14 +44,14 @@ eval_sim_h2 <- function(sim_h2, n, n_per_genome = 1,
     h2 <- sapply(1:n, function(i) fit_sommer(sim_y = y, i = i, K = K_fit))
   } else if (method == "miqtl") {
     eigen.K <- eigen(K_fit)
-    fit_miqt <- function(sim_y, i, K, eigen.K) {
+    fit_miqtl <- function(sim_y, i, K, eigen.K) {
       
       fit <- miqtl::lmmbygls(y ~ 1, 
                              data = data.frame(y = sim_y[,i], SUBJECT.NAME = rownames(sim_y)),
                              K = K, eigen.K = eigen.K, use.par = "h2.REML")
       fit$h2
     }
-    h2 <- sapply(1:n, function(i) fit_miqt(sim_y = y, i = i, K = K_fit, eigen.K = eigen.K))
+    h2 <- sapply(1:n, function(i) fit_miqtl(sim_y = y, i = i, K = K_fit, eigen.K = eigen.K))
   }
   
   h2
@@ -105,14 +105,14 @@ eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains, K_str
     rownames(K_ind) <- colnames(K_ind) <- as.character(ind_to_strain_data[,"SUBJECT.NAME"])
     eigen.K <- eigen(K_ind)
     
-    fit_miqt <- function(sim_y, i, K, eigen.K) {
+    fit_miqtl <- function(sim_y, i, K, eigen.K) {
       
       fit <- miqtl::lmmbygls(y ~ 1, 
                              data = data.frame(y = sim_y[,i], SUBJECT.NAME = rownames(sim_y)),
                              K = K, eigen.K = eigen.K, use.par = "h2.REML")
       fit$h2
     }
-    h2 <- sapply(1:n_sims, function(i) fit_miqt(sim_y = y, i = i, K = K_ind, eigen.K = eigen.K))
+    h2 <- sapply(1:n_sims, function(i) fit_miqtl(sim_y = y, i = i, K = K_ind, eigen.K = eigen.K))
   }
 
   h2
