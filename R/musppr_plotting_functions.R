@@ -47,7 +47,7 @@ plot_ccrix_grid <- function(cc_strains,
     ggplot2::scale_x_discrete(position = "top") +
     ggplot2::guides(fill = "none") +
     ggplot2::theme_minimal() +
-    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 1, size = text_size, hjust = -0.5), 
+    ggplot2::theme(axis.text.x.top = ggplot2::element_text(angle = 90, size = text_size, vjust = 0.5, hjust = 1), 
                    axis.text.y = ggplot2::element_text(size = text_size),
                    plot.title = ggplot2::element_text(hjust = 0.5, size = 16),
                    plot.subtitle = ggplot2::element_text(hjust = 0.5)) +
