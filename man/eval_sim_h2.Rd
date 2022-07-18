@@ -7,6 +7,7 @@
 eval_sim_h2(
   sim_h2,
   n,
+  n_per_genome = 1,
   K,
   K_fit = NULL,
   intercept = 0,

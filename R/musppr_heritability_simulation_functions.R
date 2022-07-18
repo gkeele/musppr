@@ -4,7 +4,8 @@
 #' 
 #' @export
 #' @examples eval_sim_h2()
-eval_sim_h2 <- function(sim_h2, n, K, K_fit = NULL,
+eval_sim_h2 <- function(sim_h2, n, n_per_genome = 1,
+                        K, K_fit = NULL,
                         intercept = 0,
                         method = c("qtl2", "sommer", "miqtl")) {
   
@@ -14,6 +15,15 @@ eval_sim_h2 <- function(sim_h2, n, K, K_fit = NULL,
   ## Simulation
   u <- t(MASS::mvrnorm(n = n, mu = rep(0, nrow(K)), Sigma = K))
   e <- sapply(1:n, function(i) rnorm(n = nrow(K)))
+  
+  ## Adjust effect sizes for replicates
+  if (sim_h2 > 0) {
+    noise_effect_size <- 1 - sim_h2
+    noise_effect_size <- noise_effect_size/n_per_genome
+    scale_factor <- (1 - noise_effect_size)/sim_h2
+    sim_h2 <- scale_factor * sim_h2
+  }
+  
   y <- sapply(1:n, function(i) intercept + u[,i] * sqrt(sim_h2/non_sample_var(u[,i])) + e[,i] * sqrt((1 - sim_h2)/non_sample_var(e[,i])))
   rownames(y) <- rownames(K)
   
