@@ -36,7 +36,8 @@ eval_sim_h2 <- function(sim_h2, n, n_per_genome = 1,
                           random = ~ sommer::vs(id, Gu = K),
                           rcov = ~ units, 
                           data = data.frame(y = sim_y[,i], id = rownames(sim_y)),
-                          verbose = FALSE)
+                          verbose = FALSE,
+                          date.warning = FALSE)
       h2 <- sommer::vpredict(fit, h2 ~ (V1)/(V1 + V2))
       h2$Estimate
     }
@@ -87,7 +88,8 @@ eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains, K_str
                                             strain = gsub(x = rownames(sim_y), 
                                                           pattern = "_[0-9]+", 
                                                           replacement = "")),
-                          verbose = FALSE)
+                          verbose = FALSE,
+                          date.warning = FALSE)
       
       h2 <- sommer::vpredict(fit, h2 ~ (V1)/(V1 + V2))
       h2$Estimate
@@ -149,7 +151,8 @@ eval_sim_h2_sommer_strainvar <- function(sim_h2_add_prop, h2_total,
                                           strain = gsub(x = rownames(sim_y), 
                                                         pattern = "_[0-9]+", 
                                                         replacement = "")),
-                        verbose = FALSE)
+                        verbose = FALSE,
+                        date.warning = FALSE)
     h2_add <- sommer::vpredict(fit, h2_add ~ (V1)/(V1 + V2 + V3))
     h2_strain <- sommer::vpredict(fit, h2_strain ~ (V2)/(V1 + V2 + V3))
     c(h2_add$Estimate, h2_strain$Estimate)
