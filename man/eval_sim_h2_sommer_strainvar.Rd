@@ -11,7 +11,8 @@ eval_sim_h2_sommer_strainvar(
   n_per_strain,
   K_strains,
   K_strains_fit = NULL,
-  intercept = 0
+  intercept = 0,
+  use_rint = FALSE
 )
 }
 \description{

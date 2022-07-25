@@ -30,3 +30,8 @@ incidence_matrix <- function (fact) {
   colnames(m) <- levels(fact)
   return(m)
 }
+
+rint <- function (x) {
+  x = rank(x, na.last = "keep", ties.method = "average")/(sum(!is.na(x)) + 1)
+  qnorm(x)
+}

@@ -11,7 +11,8 @@ eval_sim_h2(
   K,
   K_fit = NULL,
   intercept = 0,
-  method = c("qtl2", "sommer", "miqtl")
+  method = c("qtl2", "sommer", "miqtl"),
+  use_rint = FALSE
 )
 }
 \description{

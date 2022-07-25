@@ -11,7 +11,8 @@ eval_sim_h2_with_reps(
   K_strains,
   K_strains_fit = NULL,
   intercept = 0,
-  method = c("sommer", "miqtl")
+  method = c("sommer", "miqtl"),
+  use_rint = FALSE
 )
 }
 \description{

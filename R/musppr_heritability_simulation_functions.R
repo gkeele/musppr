@@ -7,7 +7,8 @@
 eval_sim_h2 <- function(sim_h2, n, n_per_genome = 1,
                         K, K_fit = NULL,
                         intercept = 0,
-                        method = c("qtl2", "sommer", "miqtl")) {
+                        method = c("qtl2", "sommer", "miqtl"),
+                        use_rint = FALSE) {
   
   if (is.null(K_fit)) { K_fit <- K }
   method <- method[1]
@@ -25,6 +26,9 @@ eval_sim_h2 <- function(sim_h2, n, n_per_genome = 1,
   }
   
   y <- sapply(1:n, function(i) intercept + u[,i] * sqrt(sim_h2/non_sample_var(u[,i])) + e[,i] * sqrt((1 - sim_h2)/non_sample_var(e[,i])))
+  if (use_rint) {
+    y <- apply(y, 2, function(x) rint(x))
+  }
   rownames(y) <- rownames(K)
   
   if (method == "qtl2") {
@@ -65,7 +69,8 @@ eval_sim_h2 <- function(sim_h2, n, n_per_genome = 1,
 #' @export
 #' @examples eval_sim_h2_with_reps()
 eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains, K_strains_fit = NULL,
-                                  intercept = 0, method = c("sommer", "miqtl")) {
+                                  intercept = 0, method = c("sommer", "miqtl"),
+                                  use_rint = FALSE) {
   
   if (is.null(K_strains_fit)) { K_strains_fit <- K_strains }
   method <- method[1]
@@ -75,6 +80,9 @@ eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains, K_str
   e <- sapply(1:n_sims, function(i) rnorm(n = nrow(K_strains) * n_per_strain))
   
   y <- sapply(1:n_sims, function(i) intercept + u[,i] * sqrt(sim_h2/non_sample_var(u[,i])) + e[,i] * sqrt((1 - sim_h2)/non_sample_var(e[,i])))
+  if (use_rint) {
+    y <- apply(y, 2, function(x) rint(x))
+  }
   rownames(y) <- paste(rep(rownames(K_strains), each = n_per_strain), rep(1:n_per_strain, times = nrow(K_strains)), sep = "_")
   
   if (method == "sommer") {
@@ -128,7 +136,8 @@ eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains, K_str
 #' @examples eval_sim_h2_sommer_strainvar()
 eval_sim_h2_sommer_strainvar <- function(sim_h2_add_prop, h2_total,
                                          n_sims, n_per_strain, K_strains,  K_strains_fit = NULL,
-                                         intercept = 0) {
+                                         intercept = 0,
+                                         use_rint = FALSE) {
   
   if (is.null(K_strains_fit)) { K_strains_fit <- K_strains }
   
@@ -139,6 +148,9 @@ eval_sim_h2_sommer_strainvar <- function(sim_h2_add_prop, h2_total,
   e <- sapply(1:n_sims, function(i) rnorm(n = nrow(K_strains) * n_per_strain))
   
   y <- sapply(1:n_sims, function(i) intercept + u_add[,i] * sqrt((sim_h2_add_prop * h2_total)/non_sample_var(u_add[,i])) + u_strain[,i] * sqrt(((1 - sim_h2_add_prop) * h2_total)/non_sample_var(u_strain[,i])) + e[,i] * sqrt((1 - h2_total)/non_sample_var(e[,i])))
+  if (use_rint) {
+    y <- apply(y, 2, function(x) rint(x))
+  }
   rownames(y) <- paste(rep(rownames(K_strains), each = n_per_strain), rep(1:n_per_strain, times = nrow(K_strains)), sep = "_")
   
   fit_sommer <- function(sim_y, i, K) {
