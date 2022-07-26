@@ -70,7 +70,7 @@ eval_sim_h2 <- function(sim_h2, n, n_per_genome = 1,
 #' @examples eval_sim_h2_with_reps()
 eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains, K_strains_fit = NULL,
                                   intercept = 0, method = c("sommer", "miqtl"),
-                                  use_rint = FALSE, do_Kasv = FALSE, do_Kasv_fit = FALSE) {
+                                  use_rint = FALSE, do_Kasv_sim = FALSE, do_Kasv_fit = FALSE) {
   
   if (is.null(K_strains_fit)) { K_strains_fit <- K_strains }
   if (do_Kasv_fit & method == "sommer") {
@@ -79,12 +79,11 @@ eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains, K_str
   }
   method <- method[1]
   
-  if (do_Kasv & method == "miqtl") {
+  if (do_Kasv_sim) {
     K_strains_sim <- make_Kasv(K_strains)
   } else {
     K_strains_sim <- K_strains
   }
-  
   
   u <- t(MASS::mvrnorm(n = n_sims, mu = rep(0, nrow(K_strains_sim)), Sigma = K_strains_sim))
   u <- u[rep(1:nrow(K_strains_sim), each = n_per_strain),]
