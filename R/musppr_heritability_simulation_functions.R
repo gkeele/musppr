@@ -70,9 +70,13 @@ eval_sim_h2 <- function(sim_h2, n, n_per_genome = 1,
 #' @examples eval_sim_h2_with_reps()
 eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains, K_strains_fit = NULL,
                                   intercept = 0, method = c("sommer", "miqtl"),
-                                  use_rint = FALSE) {
+                                  use_rint = FALSE, use_Kasv = FALSE) {
   
   if (is.null(K_strains_fit)) { K_strains_fit <- K_strains }
+  if (use_Kasv & method == "sommer") {
+    cat("Cannot currently use the full ASV form of the kinship matrix (mouse-level matrix with replicates) with sommer")
+    cat("use_Kasv essentially set to FALSE")
+  }
   method <- method[1]
   
   u <- t(MASS::mvrnorm(n = n_sims, mu = rep(0, nrow(K_strains)), Sigma = K_strains))
@@ -113,6 +117,9 @@ eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains, K_str
                       data = ind_to_strain_data)
     K_ind <- Z %*% tcrossprod(K_strains_fit, Z)
     rownames(K_ind) <- colnames(K_ind) <- as.character(ind_to_strain_data[,"SUBJECT.NAME"])
+    if (use_Kasv) {
+      K_ind <- make_Kasv(K_ind)
+    }
     eigen.K <- eigen(K_ind)
     
     fit_miqtl <- function(sim_y, i, K, eigen.K) {
