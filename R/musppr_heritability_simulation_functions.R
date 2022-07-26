@@ -73,7 +73,7 @@ eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains, K_str
                                   use_rint = FALSE, do_Kasv = FALSE, do_Kasv_fit = FALSE) {
   
   if (is.null(K_strains_fit)) { K_strains_fit <- K_strains }
-  if (use_Kasv_fit & method == "sommer") {
+  if (do_Kasv_fit & method == "sommer") {
     cat("Cannot currently use the full ASV form of the kinship matrix (mouse-level matrix with replicates) with sommer")
     cat("do_Kasv_fit essentially set to FALSE")
   }
