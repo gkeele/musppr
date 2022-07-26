@@ -13,7 +13,8 @@ eval_sim_h2_with_reps(
   intercept = 0,
   method = c("sommer", "miqtl"),
   use_rint = FALSE,
-  use_Kasv = FALSE
+  do_Kasv = FALSE,
+  do_Kasv_fit = FALSE
 )
 }
 \description{

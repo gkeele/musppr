@@ -70,24 +70,31 @@ eval_sim_h2 <- function(sim_h2, n, n_per_genome = 1,
 #' @examples eval_sim_h2_with_reps()
 eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains, K_strains_fit = NULL,
                                   intercept = 0, method = c("sommer", "miqtl"),
-                                  use_rint = FALSE, use_Kasv = FALSE) {
+                                  use_rint = FALSE, do_Kasv = FALSE, do_Kasv_fit = FALSE) {
   
   if (is.null(K_strains_fit)) { K_strains_fit <- K_strains }
-  if (use_Kasv & method == "sommer") {
+  if (use_Kasv_fit & method == "sommer") {
     cat("Cannot currently use the full ASV form of the kinship matrix (mouse-level matrix with replicates) with sommer")
-    cat("use_Kasv essentially set to FALSE")
+    cat("do_Kasv_fit essentially set to FALSE")
   }
   method <- method[1]
   
-  u <- t(MASS::mvrnorm(n = n_sims, mu = rep(0, nrow(K_strains)), Sigma = K_strains))
-  u <- u[rep(1:nrow(K_strains), each = n_per_strain),]
-  e <- sapply(1:n_sims, function(i) rnorm(n = nrow(K_strains) * n_per_strain))
+  if (do_Kasv & method == "miqtl") {
+    K_strains_sim <- make_Kasv(K_strains)
+  } else {
+    K_strains_sim <- K_strains
+  }
+  
+  
+  u <- t(MASS::mvrnorm(n = n_sims, mu = rep(0, nrow(K_strains_sim)), Sigma = K_strains_sim))
+  u <- u[rep(1:nrow(K_strains_sim), each = n_per_strain),]
+  e <- sapply(1:n_sims, function(i) rnorm(n = nrow(K_strains_sim) * n_per_strain))
   
   y <- sapply(1:n_sims, function(i) intercept + u[,i] * sqrt(sim_h2/non_sample_var(u[,i])) + e[,i] * sqrt((1 - sim_h2)/non_sample_var(e[,i])))
   if (use_rint) {
     y <- apply(y, 2, function(x) rint(x))
   }
-  rownames(y) <- paste(rep(rownames(K_strains), each = n_per_strain), rep(1:n_per_strain, times = nrow(K_strains)), sep = "_")
+  rownames(y) <- paste(rep(rownames(K_strains_sim), each = n_per_strain), rep(1:n_per_strain, times = nrow(K_strains_sim)), sep = "_")
   
   if (method == "sommer") {
     fit_sommer <- function(sim_y, i, K) {
@@ -112,7 +119,8 @@ eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains, K_str
     ind_to_strain_data <- data.frame(SUBJECT.NAME = rownames(y), 
                                      strain = gsub(x = rownames(y), 
                                                    pattern = "_[0-9]+", 
-                                                   replacement = ""))
+                                                   replacement = "")) %>%
+      mutate(strain = factor(strain, levels = colnames(K_strains_fit)))
     Z <- model.matrix(miqtl:::process.random.formula(geno.id = "strain"), 
                       data = ind_to_strain_data)
     K_ind <- Z %*% tcrossprod(K_strains_fit, Z)
@@ -120,6 +128,7 @@ eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains, K_str
     if (use_Kasv) {
       K_ind <- make_Kasv(K_ind)
     }
+    
     eigen.K <- eigen(K_ind)
     
     fit_miqtl <- function(sim_y, i, K, eigen.K) {
