@@ -125,7 +125,7 @@ eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains, K_str
                       data = ind_to_strain_data)
     K_ind <- Z %*% tcrossprod(K_strains_fit, Z)
     rownames(K_ind) <- colnames(K_ind) <- as.character(ind_to_strain_data[,"SUBJECT.NAME"])
-    if (use_Kasv) {
+    if (do_Kasv) {
       K_ind <- make_Kasv(K_ind)
     }
     
