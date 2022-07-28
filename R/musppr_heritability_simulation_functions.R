@@ -197,4 +197,57 @@ make_Kasv <- function(Z) {
   Kasv
 }
 
+#' Simulate data with additive and strain/genome heritability components and evaluate heritability estimation in an additive-only model
+#'
+#' This function ...
+#' 
+#' @export
+#' @examples eval_sim_h2_miqtl_strainvar_add_only_fit()
+eval_sim_h2_miqtl_strainvar_add_only_fit <- function(sim_h2_add_prop, h2_total,
+                                                     n_sims, n_per_strain, K_strains,  K_strains_fit = NULL,
+                                                     intercept = 0,
+                                                     use_rint = FALSE,
+                                                     do_Kasv_fit = FALSE) {
+  
+  if (is.null(K_strains_fit)) { K_strains_fit <- K_strains }
+  
+  u_add <- t(MASS::mvrnorm(n = n_sims, mu = rep(0, nrow(K_strains)), Sigma = K_strains))
+  u_add <- u_add[rep(1:nrow(K_strains), each = n_per_strain),]
+  u_strain <- sapply(1:n_sims, function(i) rnorm(n = nrow(K_strains)))
+  u_strain <- u_strain[rep(1:nrow(K_strains), each = n_per_strain),]
+  e <- sapply(1:n_sims, function(i) rnorm(n = nrow(K_strains) * n_per_strain))
+  
+  y <- sapply(1:n_sims, function(i) intercept + u_add[,i] * sqrt((sim_h2_add_prop * h2_total)/non_sample_var(u_add[,i])) + u_strain[,i] * sqrt(((1 - sim_h2_add_prop) * h2_total)/non_sample_var(u_strain[,i])) + e[,i] * sqrt((1 - h2_total)/non_sample_var(e[,i])))
+  if (use_rint) {
+    y <- apply(y, 2, function(x) rint(x))
+  }
+  rownames(y) <- paste(rep(rownames(K_strains), each = n_per_strain), rep(1:n_per_strain, times = nrow(K_strains)), sep = "_")
+  
+  ind_to_strain_data <- data.frame(SUBJECT.NAME = rownames(y), 
+                                   strain = gsub(x = rownames(y), 
+                                                 pattern = "_[0-9]+", 
+                                                 replacement = "")) %>%
+    mutate(strain = factor(strain, levels = colnames(K_strains_fit)))
+  Z <- model.matrix(miqtl:::process.random.formula(geno.id = "strain"), 
+                    data = ind_to_strain_data)
+  K_ind <- Z %*% tcrossprod(K_strains_fit, Z)
+  rownames(K_ind) <- colnames(K_ind) <- as.character(ind_to_strain_data[,"SUBJECT.NAME"])
+  
+  if (do_Kasv_fit) {
+    K_ind <- make_Kasv(K_ind)
+  }
+  
+  eigen.K <- eigen(K_ind)
+  
+  fit_miqtl <- function(sim_y, i, K, eigen.K) {
+    
+    fit <- miqtl::lmmbygls(y ~ 1, 
+                           data = data.frame(y = sim_y[,i], SUBJECT.NAME = rownames(sim_y)),
+                           K = K, eigen.K = eigen.K, use.par = "h2.REML")
+    fit$h2
+  }
+  h2 <- sapply(1:n_sims, function(i) fit_miqtl(sim_y = y, i = i, K = K_ind, eigen.K = eigen.K))
+  h2
+}
+
 
