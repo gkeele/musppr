@@ -13,12 +13,35 @@ eval_sim_h2_with_reps(
   intercept = 0,
   method = c("sommer", "miqtl"),
   use_rint = FALSE,
-  do_Kasv_fit = FALSE
+  do_Kasv_fit = FALSE,
+  return_data = FALSE
 )
 }
+\arguments{
+\item{sim_h2}{Specified heritability for the simulated data. Must be between 0 and 1.}
+
+\item{n_sims}{The number of simulations to perform.}
+
+\item{n_per_strain}{The number of replicates per genome.}
+
+\item{K_strains}{The strain-level genetic relationship (i.e., kinship) matrix used for simulation and by default for estimation.}
+
+\item{K_strains_fit}{DEFAULT: NULL. Allows for a different kinship matrix to be provided for estimation.}
+
+\item{intercept}{DEFAULT: 0. A shared intercept to center the data.}
+
+\item{method}{DEFAULT: "sommer". The statistical package used to estimate heritability. Options are "sommer" and "miqtl".}
+
+\item{use_rint}{DEFAULT: FALSE. If TRUE, perfoms a rank-based inverse normal transformation on data after simulation but before estimation.}
+
+\item{return_data}{DEFAULT: FALSE. IF TRUE, returns simulated data as well as heritability estimates.}
+}
+\value{
+\code{eval_sim_h2_with_reps} returns a \code{n}-vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n}-vector and the \code{k}-by-\code{n} simulated data matrix as elements.
+}
 \description{
-This function ...
+This function simulates trait data for populations with replicates with a specified heritability and then performs heritability estimation.
 }
 \examples{
-eval_sim_h2_with_reps()
+eval_sim_h2_with_reps(sim_h2 = 0.8, n_sims = 100, n_per_strain = 4, K = K_CCstrain_overall, method = "miqtl")
 }
