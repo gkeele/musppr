@@ -43,5 +43,5 @@ eval_sim_h2_with_reps(
 This function simulates trait data for populations with replicates with a specified heritability and then performs heritability estimation.
 }
 \examples{
-eval_sim_h2_with_reps(sim_h2 = 0.8, n_sims = 100, n_per_strain = 4, K = K_CCstrain_overall, method = "miqtl")
+eval_sim_h2_with_reps(sim_h2 = 0.8, n_sims = 100, n_per_strain = 4, K_strains = K_CCstrain_overall, method = "miqtl")
 }
