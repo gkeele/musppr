@@ -151,7 +151,7 @@ eval_sim_h2_with_reps <- function(sim_h2,
     K_ind <- Z %*% tcrossprod(K_strains_fit, Z)
     rownames(K_ind) <- colnames(K_ind) <- as.character(ind_to_strain_data[,"SUBJECT.NAME"])
     if (do_Kasv_fit) {
-      K_ind <- make_Kasv(K_ind)
+      K_ind <- make_Kasv(K = K_ind)
     }
     
     eigen.K <- eigen(K_ind)
@@ -239,15 +239,29 @@ eval_sim_h2_sommer_strainvar <- function(sim_h2_add_prop,
 
 #' Scale kinship matrix to average semivariance 
 #'
-#' This function ...
+#' This function takes a kinship matrix and calculates the average semivariance form.
 #' 
+#' @param Z DEFAULT: NULL. SNP allele count design matrix. Provide Z if using a SNP-based kinship matrix.
+#' @param K DEFAULT: NULL. Haplotype-based kinship matrix, as calculated with qtl2::calc_kinship().
 #' @export
 #' @examples make_Kasv()
-make_Kasv <- function(Z) {
+make_Kasv <- function(Z = NULL,
+                      K = NULL) {
   
-  Kbar <- scale(Z, scale = FALSE) %*% t(scale(Z, scale = FALSE))
-  Kasv <- Kbar/(psych::tr(Kbar)/(nrow(Z) - 1))
-  rownames(Kasv) <- colnames(Kasv) <- rownames(Z)
+  if (!is.null(Z)) {
+    Kbar <- scale(Z, scale = FALSE) %*% t(scale(Z, scale = FALSE))
+  } else if (!is.null(K)) {
+    P <- diag(nrow(K)) - (1/nrow(K))*matrix(1, nrow = nrow(K), ncol = 1) %*% matrix(1, nrow = 1, ncol = nrow(K))
+    Kbar <- P %*% K %*% t(P)
+  }
+  Kasv <- Kbar/(psych::tr(Kbar)/(nrow(Kbar) - 1))
+  
+  if (!is.null(Z)) {
+    rownames(Kasv) <- colnames(Kasv) <- rownames(Z)
+  } else if (!is.null(K)) {
+    rownames(Kasv) <- colnames(Kasv) <- rownames(K)
+  }
+  
   Kasv
 }
 
@@ -288,7 +302,7 @@ eval_sim_h2_miqtl_strainvar_add_only_fit <- function(sim_h2_add_prop, h2_total,
   rownames(K_ind) <- colnames(K_ind) <- as.character(ind_to_strain_data[,"SUBJECT.NAME"])
   
   if (do_Kasv_fit) {
-    K_ind <- make_Kasv(K_ind)
+    K_ind <- make_Kasv(K = K_ind)
   }
   
   eigen.K <- eigen(K_ind)

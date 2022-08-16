@@ -4,10 +4,15 @@
 \alias{make_Kasv}
 \title{Scale kinship matrix to average semivariance}
 \usage{
-make_Kasv(Z)
+make_Kasv(Z = NULL, K = NULL)
+}
+\arguments{
+\item{Z}{DEFAULT: NULL. SNP allele count design matrix. Provide Z if using a SNP-based kinship matrix.}
+
+\item{K}{DEFAULT: NULL. Haplotype-based kinship matrix, as calculated with qtl2::calc_kinship().}
 }
 \description{
-This function ...
+This function takes a kinship matrix and calculates the average semivariance form.
 }
 \examples{
 make_Kasv()
