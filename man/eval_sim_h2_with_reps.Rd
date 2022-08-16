@@ -18,7 +18,7 @@ eval_sim_h2_with_reps(
 )
 }
 \arguments{
-\item{sim_h2}{Specified heritability for the simulated data. Must be between 0 and 1.}
+\item{sim_h2}{Specified heritability for the simulated data. Must be from 0 to 1, though cannot be 1 exactly.}
 
 \item{n_sims}{The number of simulations to perform.}
 
@@ -34,10 +34,12 @@ eval_sim_h2_with_reps(
 
 \item{use_rint}{DEFAULT: FALSE. If TRUE, perfoms a rank-based inverse normal transformation on data after simulation but before estimation.}
 
+\item{do_Kasv_fit}{DEFAULT: FALSE. If TRUE, calculates the ASV form of the individual-level kinship matrix.}
+
 \item{return_data}{DEFAULT: FALSE. IF TRUE, returns simulated data as well as heritability estimates.}
 }
 \value{
-\code{eval_sim_h2_with_reps} returns a \code{n}-vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n}-vector and the \code{k}-by-\code{n} simulated data matrix as elements.
+\code{eval_sim_h2_with_reps} returns a \code{n_sims}-vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n_sims}-vector and the \code{k}-by-\code{n_sims} simulated data matrix as elements.
 }
 \description{
 This function simulates trait data for populations with replicates with a specified heritability and then performs heritability estimation.

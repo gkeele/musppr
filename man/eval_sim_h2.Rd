@@ -17,7 +17,7 @@ eval_sim_h2(
 )
 }
 \arguments{
-\item{sim_h2}{Specified heritability for the simulated data. Must be between 0 and 1.}
+\item{sim_h2}{Specified heritability for the simulated data. Must be from 0 to 1, though cannot be 1 exactly.}
 
 \item{n}{The number of simulations to perform.}
 

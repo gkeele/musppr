@@ -1,14 +1,26 @@
 #' Simulate data and evaluate heritability estimation
 #'
-#' This function ...
+#' This function simulates trait data with a specified heritability and then performs heritability estimation.
 #' 
+#' @param sim_h2 Specified heritability for the simulated data. Must be from 0 to 1, though cannot be 1 exactly.
+#' @param n The number of simulations to perform.
+#' @param n_per_genome DEFAULT: 1. The number of observations per genome. For experiments involving replicates, should use eval_sim_h2_with_reps() instead.
+#' @param K The genetic relationship (i.e., kinship) matrix used for simulation and by default for estimation.
+#' @param K_fit DEFAULT: NULL. Allows for a different kinship matrix to be provided for estimation.
+#' @param intercept DEFAULT: 0. A shared intercept to center the data.
+#' @param method DEFAULT: "qtl2". The statistical package used to estimate heritability. Options are "qtl2", "miqtl", and "sommer".
+#' @param use_rint DEFAULT: FALSE. If TRUE, perfoms a rank-based inverse normal transformation on data after simulation but before estimation.
+#' @param return_data DEFAULT: FALSE. IF TRUE, returns simulated data as well as heritability estimates.
+#' @return \code{eval_sim_h2} returns a \code{n}-vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n}-vector and the \code{k}-by-\code{n} simulated data matrix as elements.
 #' @export
-#' @examples eval_sim_h2()
-eval_sim_h2 <- function(sim_h2, n, n_per_genome = 1,
+#' @examples eval_sim_h2(sim_h2 = 0.8, n = 100, K = K_DO_overall)
+eval_sim_h2 <- function(sim_h2, 
+                        n, n_per_genome = 1,
                         K, K_fit = NULL,
                         intercept = 0,
                         method = c("qtl2", "sommer", "miqtl"),
-                        use_rint = FALSE) {
+                        use_rint = FALSE, 
+                        return_data = FALSE) {
   
   if (is.null(K_fit)) { K_fit <- K }
   method <- method[1]
@@ -59,18 +71,38 @@ eval_sim_h2 <- function(sim_h2, n, n_per_genome = 1,
     h2 <- sapply(1:n, function(i) fit_miqtl(sim_y = y, i = i, K = K_fit, eigen.K = eigen.K))
   }
   
-  h2
+  if (!return_data) {
+    h2
+  } else {
+    list(h2 = h2, data = y)
+  }
 }
 
 #' Simulate data with strain/genome replicates and evaluate heritability estimation
 #'
-#' This function ...
+#' This function simulates trait data for populations with replicates with a specified heritability and then performs heritability estimation.
 #' 
+#' @param sim_h2 Specified heritability for the simulated data. Must be from 0 to 1, though cannot be 1 exactly.
+#' @param n_sims The number of simulations to perform.
+#' @param n_per_strain The number of replicates per genome.
+#' @param K_strains The strain-level genetic relationship (i.e., kinship) matrix used for simulation and by default for estimation.
+#' @param K_strains_fit DEFAULT: NULL. Allows for a different kinship matrix to be provided for estimation.
+#' @param intercept DEFAULT: 0. A shared intercept to center the data.
+#' @param method DEFAULT: "sommer". The statistical package used to estimate heritability. Options are "sommer" and "miqtl".
+#' @param use_rint DEFAULT: FALSE. If TRUE, perfoms a rank-based inverse normal transformation on data after simulation but before estimation.
+#' @param do_Kasv_fit DEFAULT: FALSE. If TRUE, calculates the ASV form of the individual-level kinship matrix.
+#' @param return_data DEFAULT: FALSE. IF TRUE, returns simulated data as well as heritability estimates.
+#' @return \code{eval_sim_h2_with_reps} returns a \code{n_sims}-vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n_sims}-vector and the \code{k}-by-\code{n_sims} simulated data matrix as elements.
 #' @export
-#' @examples eval_sim_h2_with_reps()
-eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains, K_strains_fit = NULL,
-                                  intercept = 0, method = c("sommer", "miqtl"),
-                                  use_rint = FALSE, do_Kasv_fit = FALSE) {
+#' @examples eval_sim_h2_with_reps(sim_h2 = 0.8, n_sims = 100, n_per_strain = 4, K_strains = K_CCstrain_overall, method = "miqtl")
+eval_sim_h2_with_reps <- function(sim_h2, 
+                                  n_sims, n_per_strain, 
+                                  K_strains, K_strains_fit = NULL,
+                                  intercept = 0, 
+                                  method = c("sommer", "miqtl"),
+                                  use_rint = FALSE, 
+                                  do_Kasv_fit = FALSE,
+                                  return_data = FALSE) {
   
   if (is.null(K_strains_fit)) { K_strains_fit <- K_strains }
   if (do_Kasv_fit & method == "sommer") {
@@ -134,19 +166,36 @@ eval_sim_h2_with_reps <- function(sim_h2, n_sims, n_per_strain, K_strains, K_str
     h2 <- sapply(1:n_sims, function(i) fit_miqtl(sim_y = y, i = i, K = K_ind, eigen.K = eigen.K))
   }
 
-  h2
+  if (!return_data) {
+    h2
+  } else {
+    list(h2 = h2, data = y)
+  }
 }
 
 #' Simulate data with additive and strain/genome heritability components and evaluate heritability estimation
 #'
-#' This function ...
+#' This function simulates trait data for populations with replicates with a strain/genome heritability components and then performs heritability estimation.
 #' 
+#' @param sim_h2_add_prop Specified proportion of heritability that is additive for the simulated data. Must be from 0 to 1.
+#' @param h2_total Specified cumulative heritability for the simulated data. Must be from 0 to 1, though cannot be 1 exactly.
+#' @param n_sims The number of simulations to perform.
+#' @param n_per_strain The number of replicates per genome.
+#' @param K_strains The strain-level genetic relationship (i.e., kinship) matrix used for simulation and by default for estimation.
+#' @param K_strains_fit DEFAULT: NULL. Allows for a different kinship matrix to be provided for estimation.
+#' @param intercept DEFAULT: 0. A shared intercept to center the data.
+#' @param use_rint DEFAULT: FALSE. If TRUE, perfoms a rank-based inverse normal transformation on data after simulation but before estimation.
+#' @param return_data DEFAULT: FALSE. IF TRUE, returns simulated data as well as heritability estimates.
+#' @return \code{eval_sim_h2_sommer_strainvar} returns a \code{n_sims}-by-\code{2} vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n_sims}-vector and the \code{k}-by-\code{n_sims} simulated data matrix as elements.
 #' @export
-#' @examples eval_sim_h2_sommer_strainvar()
-eval_sim_h2_sommer_strainvar <- function(sim_h2_add_prop, h2_total,
-                                         n_sims, n_per_strain, K_strains,  K_strains_fit = NULL,
+#' @examples eval_sim_h2_sommer_strainvar(sim_h2_add_prop = 0.5, h2_total = 0.8, n_sims = 10, n_per_strain = 4, K_strains = K_CCstrain_overall)
+eval_sim_h2_sommer_strainvar <- function(sim_h2_add_prop, 
+                                         h2_total,
+                                         n_sims, n_per_strain, 
+                                         K_strains,  K_strains_fit = NULL,
                                          intercept = 0,
-                                         use_rint = FALSE) {
+                                         use_rint = FALSE,
+                                         return_data = FALSE) {
   
   if (is.null(K_strains_fit)) { K_strains_fit <- K_strains }
   
@@ -180,7 +229,12 @@ eval_sim_h2_sommer_strainvar <- function(sim_h2_add_prop, h2_total,
   }
   
   h2 <- t(sapply(1:n_sims, function(i) fit_sommer(sim_y = y, i = i, K = K_strains_fit), simplify = "array"))
-  h2
+  
+  if (!return_data) {
+    h2
+  } else {
+    list(h2 = h2, data = y)
+  }
 }
 
 #' Scale kinship matrix to average semivariance 
