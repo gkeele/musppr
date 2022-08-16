@@ -12,12 +12,35 @@ eval_sim_h2(
   K_fit = NULL,
   intercept = 0,
   method = c("qtl2", "sommer", "miqtl"),
-  use_rint = FALSE
+  use_rint = FALSE,
+  return_data = FALSE
 )
 }
+\arguments{
+\item{sim_h2}{Specified heritability for the simulated data. Must be between 0 and 1.}
+
+\item{n}{The number of simulations to perform.}
+
+\item{n_per_genome}{DEFAULT: 1. The number of observations per genome. For experiments involving replicates, should use eval_sim_h2_with_reps() instead.}
+
+\item{K}{The genetic relationship (i.e., kinship) matrix used for simulation and by default for estimation.}
+
+\item{K_fit}{DEFAULT: NULL. Allows for a different kinship matrix to be provided for estimation.}
+
+\item{intercept}{DEFAULT: 0. A shared intercept to center the data.}
+
+\item{method}{DEFAULT: "qtl2". The statistical package used to estimate heritability. Options are "qtl2", "miqtl", and "sommer".}
+
+\item{use_rint}{DEFAULT: FALSE. If TRUE, perfoms a rank-based inverse normal transformation on data after simulation but before estimation.}
+
+\item{return_data}{DEFAULT: FALSE. IF TRUE, returns simulated data as well as heritability estimate.}
+}
+\value{
+\code{eval_sim_h2} returns a \code{n}-vector of heritability estimate if \code{return_data = FALSE}, otherwise returns a list with \code{n}-vector and the \code{k}x\code{n} simulated data matrix as elements.
+}
 \description{
-This function ...
+This function simulates trait data with a specified heritability and then performs heritability estimation.
 }
 \examples{
-eval_sim_h2()
+eval_sim_h2(sim_h2 = 0.8, n = 100, K = K_DO_overall)
 }
