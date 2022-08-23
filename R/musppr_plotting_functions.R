@@ -10,7 +10,12 @@
 #' @param grid_line_wide DEFAULT: 0.5. The line width of the grid lines.
 #' @param text_size DEFAULT: 6. The size of text for the labels.
 #' @export
-#' @examples plot_ccrix_grid()
+#' @examples cc_strains <- c(paste0("CC00", 1:9), paste0("CC0", 10:50))
+#' cc_pairs <- combn(cc_strains, 2)
+#' ccrix_names <- paste(cc_pairs[1,], cc_pairs[2,], sep = "x")
+#' set.seed(10)
+#' ccrix_set <- sample(ccrix_names, 100)
+#' plot_ccrix_grid(cc_strains = cc_strains, ccrix_set = ccrix_set, include_cc = FALSE)
 plot_ccrix_grid <- function(cc_strains,
                             ccrix_set,
                             low = "white",

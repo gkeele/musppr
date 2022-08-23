@@ -33,5 +33,10 @@ plot_ccrix_grid(
 This function makes a grid plot to describe a CC-RIX sample
 }
 \examples{
-plot_ccrix_grid()
+cc_strains <- c(paste0("CC00", 1:9), paste0("CC0", 10:50))
+cc_pairs <- combn(cc_strains, 2)
+ccrix_names <- paste(cc_pairs[1,], cc_pairs[2,], sep = "x")
+set.seed(10)
+ccrix_set <- sample(ccrix_names, 100)
+plot_ccrix_grid(cc_strains = cc_strains, ccrix_set = ccrix_set, include_cc = FALSE)
 }
