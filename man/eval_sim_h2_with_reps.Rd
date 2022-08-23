@@ -22,7 +22,7 @@ eval_sim_h2_with_reps(
 
 \item{n_sims}{The number of simulations to perform.}
 
-\item{n_per_strain}{The number of replicates per genome.}
+\item{n_per_strain}{The number of replicates per genome (strains or F1s).}
 
 \item{K_strains}{The strain-level genetic relationship (i.e., kinship) matrix used for simulation and by default for estimation.}
 
@@ -42,7 +42,7 @@ eval_sim_h2_with_reps(
 \code{eval_sim_h2_with_reps} returns a \code{n_sims}-vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n_sims}-vector and the \code{k}-by-\code{n_sims} simulated data matrix as elements.
 }
 \description{
-This function simulates trait data for populations with replicates with a specified heritability and then performs heritability estimation.
+This function simulates trait data for populations with replicates to have a specified heritability and then performs heritability estimation.
 }
 \examples{
 eval_sim_h2_with_reps(sim_h2 = 0.8, n_sims = 100, n_per_strain = 4, K_strains = K_CCstrain_overall, method = "miqtl")

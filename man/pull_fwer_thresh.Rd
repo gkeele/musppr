@@ -6,8 +6,17 @@
 \usage{
 pull_fwer_thresh(maxlod, right_side = TRUE, fwer = 0.05, use_gev = TRUE)
 }
+\arguments{
+\item{maxlod}{Vector of the maximum LOD scores from each null bootstrap sample or permutation.}
+
+\item{right_side}{DEFAULT: TRUE. If TRUE, p-value is calculated based on the right-hand tail of the distribution. If FALSE, left-hand tail is used.}
+
+\item{fwer}{DEFAULT: 0.05. The false positive probability (alpha) in terms of FWER.}
+
+\item{use_gev}{DEFAULT: TRUE. If TRUE, maximum LOD scores are used to fit an extreme value distribution, which is used to calculate the threshold. If FALSE, empirical quantiles are used instead.}
+}
 \description{
-This function ...
+This function estimates significance threshold that control family-wise error rates (FWER) based on maximum LOD scores from scans of null parametric bootstraps or permutations of the data.
 }
 \examples{
 pull_fwer_thresh()

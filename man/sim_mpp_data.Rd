@@ -25,8 +25,45 @@ sim_mpp_data(
   sim_label = "sim_y"
 )
 }
+\arguments{
+\item{genoprobs}{Founder haplotype data (i.e., "genoprobs") in the qtl2 format (a per chromosome list of 3D arrays that are individual x diplotype/allele x locus). For the CC-RIX and DO, allele dosages are expected.}
+
+\item{map}{The marker/locus information corresponding to the genoprobs. The expected format is qtl2 (a per chromosome list of position vectors with marker/locus as element names).}
+
+\item{K}{DEFAULT: NULL. The genetic relationship (i.e., kinship) information, expected to be either a single matrix (as with heritability) or a list of matrices for the leave-one-chromosome out (LOCO) approach.}
+
+\item{samples}{DEFAULT: NULL. Subset of samples to use in simulations. If NULL, all individuals in genoprobs used.}
+
+\item{qtl_effect_size}{DEFAULT: 0.1. The proportion of variation explained by the QTL. Must be greater than or equal to 0 and less than 1 - \code{strain_effect_size} - \code{kinship_effect_size}.}
+
+\item{strain_effect_size}{DEFAULT: 0. The proportion of variation explained by strain identity. Must be greater than or equal to 0 and less than 1 - \code{qtl_effect_size} - \code{kinship_effect_size}.}
+
+\item{kinship_effect_size}{DEFAULT: 0. The proportion of variation explained by kinship/polygene. Must be greater than or equal to 0 and less than 1 - \code{qtl_effect_size} - \code{strain_effect_size}.}
+
+\item{locus}{DEFAULT: NULL. Specify as a vector of markers/loci corresponding to the map at which to simulate QTL. If NULL, loci will be randomly selected.}
+
+\item{vary_locus}{DEFAULT: TRUE. If \code{locus} = NULL, and multiple loci, as many as \code{num_sim} will be randomly sampled. This allows power calculations to incorporate sampling variation due to varying loci.}
+
+\item{num_replicates}{DEFAULT: 1. The number of replicates per genome (strains or F1s).}
+
+\item{num_sim}{DEFAULT: 1. The number of simulations to perform.}
+
+\item{M_ID}{DEFAULT: NULL. The functional allele to founder strain distribution, which can be encoded in an 8 x \code{num_alleles} M matrix. IF NULL, it is randomly sampled.}
+
+\item{sample_method}{DEFAULT: "uniform". How to randomly sample the functional allele to founder strain distribution M matrix. The alternative is "crp", meaning Chinese restaurant process, which upweights less-balanced M matrices.}
+
+\item{num_alleles}{DEFAULT: 8. The number of functions alleles. For the CC, CC-RIX, and DO, this will take values ranging from 2 to 8. For a bi-allelic variant, there are 2 alleles.}
+
+\item{scale_type}{DEFAULT: "sample". The reference population to which the effects are scaled. If "sample", effects are scaled to the simulated sample population. If "balanced", effects are scaled with respect to a homozygous and balanced population.}
+
+\item{num_founders}{DEFAULT: 8. The number of founder strains. For the CC, CC-RIX, and DO, this is 8.}
+
+\item{beta}{DEFAULT: NULL. The effect vector. The number of elements should match the number of columns of M. If NULL, it is randomly sampled according to M.}
+
+\item{sim_label}{DEFAULT: "sim_y". A prefix applied to the column names of the simulated data.}
+}
 \description{
-This function ...
+This function simulates trait data to have specified QTL and polygene effect sizes based on genetic data from CC, CC-RIX, and DO mice.
 }
 \examples{
 sim_mpp_data()

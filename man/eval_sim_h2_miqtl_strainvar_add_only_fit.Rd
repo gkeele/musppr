@@ -13,12 +13,37 @@ eval_sim_h2_miqtl_strainvar_add_only_fit(
   K_strains_fit = NULL,
   intercept = 0,
   use_rint = FALSE,
-  do_Kasv_fit = FALSE
+  do_Kasv_fit = FALSE,
+  return_data = FALSE
 )
 }
+\arguments{
+\item{sim_h2_add_prop}{Specified proportion of heritability that is additive for the simulated data. Must be from 0 to 1.}
+
+\item{h2_total}{Specified cumulative heritability for the simulated data. Must be from 0 to 1, though cannot be 1 exactly.}
+
+\item{n_sims}{The number of simulations to perform.}
+
+\item{n_per_strain}{The number of replicates per genome (strains or F1s).}
+
+\item{K_strains}{The strain-level genetic relationship (i.e., kinship) matrix used for simulation and by default for estimation.}
+
+\item{K_strains_fit}{DEFAULT: NULL. Allows for a different kinship matrix to be provided for estimation.}
+
+\item{intercept}{DEFAULT: 0. A shared intercept to center the data.}
+
+\item{use_rint}{DEFAULT: FALSE. If TRUE, perfoms a rank-based inverse normal transformation on data after simulation but before estimation.}
+
+\item{do_Kasv_fit}{DEFAULT: FALSE. If TRUE, calculates the ASV form of the individual-level kinship matrix.}
+
+\item{return_data}{DEFAULT: FALSE. IF TRUE, returns simulated data as well as heritability estimates.}
+}
+\value{
+\code{eval_sim_h2_miqtl_strainvar_add_only_fit} returns a \code{n_sims}-by-\code{2} vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n_sims}-vector and the \code{k}-by-\code{n_sims} simulated data matrix as elements.
+}
 \description{
-This function ...
+This function simulates trait data for populations with replicates to have specified additive and strain/F1 heritability components and then performs additive heritability estimation.
 }
 \examples{
-eval_sim_h2_miqtl_strainvar_add_only_fit()
+eval_sim_h2_miqtl_strainvar_add_only_fit(sim_h2_add_prop = 0.5, h2_total = 0.8, n_sims = 10, n_per_strain = 4, K_strains = K_CCstrain_overall)
 }

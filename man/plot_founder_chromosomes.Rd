@@ -15,8 +15,25 @@ plot_founder_chromosomes(
   end_type = c("rounded", "circle", "square")
 )
 }
+\arguments{
+\item{col}{The color of the haplotype pair.}
+
+\item{width}{DEFAULT: 0.15. The width of the chromatids.}
+
+\item{gap}{DEFAULT: 0.3. The space between the chromatids.}
+
+\item{y_shift}{DEFAULT: NULL. Option to shift the plot along the y-axis.}
+
+\item{x_shift}{DEFAULT: 0. Option to shift the plot along the x-axis.}
+
+\item{add_border}{DEFAULT: TRUE. If TRUE, a black outline is added to the chromatids. If FALSE, no outline is used.}
+
+\item{border_lwd}{DEFAULT: 1.5. The line width of the outline.}
+
+\item{end_type}{DEFAULT: "rounded". If "rounded", the corners of the chromatids are rounded. If "circle", the ends of the chromatids are half cirlces. If "square", the chromatids are rectangles with sharp corners.}
+}
 \description{
-This function ...
+This function makes a founder haplotype pair cartoon (solid color).
 }
 \examples{
 plot_founder_chromosomes(col = qtl2::CCcolors[1], width = 0.15, gap = 0.3)

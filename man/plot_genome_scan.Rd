@@ -30,7 +30,7 @@ plot_genome_scan(
 )
 }
 \description{
-This function ...
+This function takes scan output from \code{scan1}() of qtl2 and plots the genome scan.
 }
 \examples{
 plot_genome_scan()

@@ -14,8 +14,23 @@ plot_ccrix_grid(
   text_size = 6
 )
 }
+\arguments{
+\item{cc_strains}{The set of CC strains that will make up the labels on each axes. Each element is expected to have the format "CCXXX".}
+
+\item{ccrix_set}{The set of F1s from the stains in \code{cc_strains}. Each element is expected to have the format "CC001xCC002".}
+
+\item{low}{DEFAULT: "white". The color of a cell that represents a missing F1.}
+
+\item{high}{DEFAULT: "black". The color of a cell that represents an observed F1.}
+
+\item{include_cc}{DEFAULT: TRUE. If TRUE, the CC strains (representing the diagonal) are colored as observed. If FALSE, they are colored as missing.}
+
+\item{text_size}{DEFAULT: 6. The size of text for the labels.}
+
+\item{grid_line_wide}{DEFAULT: 0.5. The line width of the grid lines.}
+}
 \description{
-This function ...
+This function makes a grid plot to describe a CC-RIX sample
 }
 \examples{
 plot_ccrix_grid()

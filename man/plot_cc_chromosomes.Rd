@@ -2,7 +2,7 @@
 % Please edit documentation in R/musppr_plotting_functions.R
 \name{plot_cc_chromosomes}
 \alias{plot_cc_chromosomes}
-\title{Draw cartoon chromosome pair for CC strains}
+\title{Draw cartoon chromosome pair for CC mouse strains}
 \usage{
 plot_cc_chromosomes(
   intervals,
@@ -16,11 +16,30 @@ plot_cc_chromosomes(
   end_type = c("rounded", "circle", "square")
 )
 }
+\arguments{
+\item{intervals}{Partitions of the unit interval (0 to 1) encoding recombination points for the chromatids.}
+
+\item{cols}{Colors for the partitions in \code{intervals}. Length be one less than the length of \code{intervals}.}
+
+\item{width}{DEFAULT: 0.15. The width of the chromatids.}
+
+\item{gap}{DEFAULT: 0.3. The space between the chromatids.}
+
+\item{y_shift}{DEFAULT: NULL. Option to shift the plot along the y-axis.}
+
+\item{x_shift}{DEFAULT: 0. Option to shift the plot along the x-axis.}
+
+\item{add_border}{DEFAULT: TRUE. If TRUE, a black outline is added to the chromatids. If FALSE, no outline is used.}
+
+\item{border_lwd}{DEFAULT: 1.5. The line width of the outline.}
+
+\item{end_type}{DEFAULT: "rounded". If "rounded", the corners of the chromatids are rounded. If "circle", the ends of the chromatids are half cirlces. If "square", the chromatids are rectangles with sharp corners.}
+}
 \description{
-This function ...
+This function makes a haplotype pair cartoon for inbred individuals, such as CC mouse strains
 }
 \examples{
-set.seed(10)
+#' set.seed(10)
 plot_cc_chromosomes(intervals = c(0, sort(runif(n = 15, min = 0, max = 1)), 1), 
                     col = sample(qtl2::CCcolors, 16, replace = TRUE), width = 0.15, gap = 0.3)
 }

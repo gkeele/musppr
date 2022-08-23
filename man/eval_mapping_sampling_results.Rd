@@ -11,8 +11,17 @@ eval_mapping_sampling_results(
   num_true_qtl
 )
 }
+\arguments{
+\item{thresh}{DEFAULT: seq(6, 9, by = 0.5). LOD score thresholds to be evaluated.}
+
+\item{prob}{DEFAULT: seq(0.8, 0.95, by = 0.01). Nominal coverage probabilities for the sampling procedure to be evaluated.}
+
+\item{parboot_results}{Results from sampling procedures. Output from the following functions: \code{run_parboot}(), \code{run_bayesboot}(), \code{run_parperm}(), and \code{run_parperm_kinship}().}
+
+\item{num_true_qtl}{Number of simulated QTL in total.}
+}
 \description{
-This function ...
+This function evaluates QTL performance in terms of mapping power and false discovery rate for simulated data based on sampling procedures (e.g., parametric bootstraps).
 }
 \examples{
 eval_mapping_sampling_results()

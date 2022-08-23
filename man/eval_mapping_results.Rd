@@ -14,8 +14,23 @@ eval_mapping_results(
   true_qtl
 )
 }
+\arguments{
+\item{thresh}{DEFAULT: seq(6, 9, by = 0.5). LOD score thresholds to be evaluated.}
+
+\item{lod_drop}{DEFAULT: seq(1, 3, by = 0.1). LOD support levels to be evaluated.}
+
+\item{bci}{DEFAULT: seq(0.8, 0.95, by = 0.01). Nominal coverage probabilities for BCIs to be evaluated.}
+
+\item{use_lod_drop}{DEFAULT: TRUE. If TRUE, LOD support intervals are evaluated. If FALSE, BCIs are evaluated.}
+
+\item{scans}{Simulated QTL scan output from \code{scan1}() of the qtl2 package.}
+
+\item{map}{The marker/locus information corresponding to the genoprobs. The expected format is qtl2 (a per chromosome list of position vectors with marker/locus as element names).}
+
+\item{true_qtl}{A table with the true QTL for the simulated data, including trait names, chromosome of the QTL, and the marker/locus of the QTL.}
+}
 \description{
-This function ...
+This function evaluates QTL performance in terms of mapping power and false discovery rate for simulated data based on LOD support intervals or Bayesian credible intervals.
 }
 \examples{
 eval_mapping_results()

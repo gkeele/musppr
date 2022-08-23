@@ -2,7 +2,7 @@
 % Please edit documentation in R/musppr_plotting_functions.R
 \name{plot_do_chromosomes}
 \alias{plot_do_chromosomes}
-\title{Draw cartoon chromosome pair for DO or CC-RIX}
+\title{Draw cartoon chromosome pair for DO or CC-RIX mice}
 \usage{
 plot_do_chromosomes(
   intervals1,
@@ -18,8 +18,31 @@ plot_do_chromosomes(
   end_type = c("rounded", "circle", "square")
 )
 }
+\arguments{
+\item{intervals1}{Partitions of the unit interval (0 to 1) encoding recombination points for the left chromatid.}
+
+\item{intervals2}{Partitions of the unit interval (0 to 1) encoding recombination points for the right chromatid.}
+
+\item{cols1}{Colors for the partitions in \code{intervals1}. Length be one less than the length of \code{intervals1}.}
+
+\item{cols2}{Colors for the partitions in \code{intervals2}. Length be one less than the length of \code{intervals2}.}
+
+\item{width}{DEFAULT: 0.15. The width of the chromatids.}
+
+\item{gap}{DEFAULT: 0.3. The space between the chromatids.}
+
+\item{y_shift}{DEFAULT: NULL. Option to shift the plot along the y-axis.}
+
+\item{x_shift}{DEFAULT: 0. Option to shift the plot along the x-axis.}
+
+\item{add_border}{DEFAULT: TRUE. If TRUE, a black outline is added to the chromatids. If FALSE, no outline is used.}
+
+\item{border_lwd}{DEFAULT: 1.5. The line width of the outline.}
+
+\item{end_type}{DEFAULT: "rounded". If "rounded", the corners of the chromatids are rounded. If "circle", the ends of the chromatids are half cirlces. If "square", the chromatids are rectangles with sharp corners.}
+}
 \description{
-This function ...
+This function makes a haplotype pair cartoon for outbred individuals, such as the DO or CC-RIX mice.
 }
 \examples{
 set.seed(10)

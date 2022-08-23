@@ -1,7 +1,14 @@
 #' CC-RIX grid plot
 #'
-#' This function ...
+#' This function makes a grid plot to describe a CC-RIX sample
 #' 
+#' @param cc_strains The set of CC strains that will make up the labels on each axes. Each element is expected to have the format "CCXXX".
+#' @param ccrix_set The set of F1s from the stains in \code{cc_strains}. Each element is expected to have the format "CC001xCC002".
+#' @param low DEFAULT: "white". The color of a cell that represents a missing F1.
+#' @param high DEFAULT: "black". The color of a cell that represents an observed F1.
+#' @param include_cc DEFAULT: TRUE. If TRUE, the CC strains (representing the diagonal) are colored as observed. If FALSE, they are colored as missing.
+#' @param grid_line_wide DEFAULT: 0.5. The line width of the grid lines.
+#' @param text_size DEFAULT: 6. The size of text for the labels.
 #' @export
 #' @examples plot_ccrix_grid()
 plot_ccrix_grid <- function(cc_strains,
@@ -58,7 +65,7 @@ plot_ccrix_grid <- function(cc_strains,
 
 #' Genome scan plot
 #'
-#' This function ...
+#' This function takes scan output from \code{scan1}() of qtl2 and plots the genome scan.
 #' 
 #' @export
 #' @examples plot_genome_scan()
@@ -279,8 +286,16 @@ plot_chromatid <- function(intervals,
 
 #' Draw cartoon chromosome pair for the founder strains of the CC, CC-RIX, and DO
 #'
-#' This function ...
+#' This function makes a founder haplotype pair cartoon (solid color).
 #' 
+#' @param col The color of the haplotype pair.
+#' @param width DEFAULT: 0.15. The width of the chromatids.
+#' @param gap DEFAULT: 0.3. The space between the chromatids.
+#' @param y_shift DEFAULT: NULL. Option to shift the plot along the y-axis.
+#' @param x_shift DEFAULT: 0. Option to shift the plot along the x-axis.
+#' @param add_border DEFAULT: TRUE. If TRUE, a black outline is added to the chromatids. If FALSE, no outline is used.
+#' @param border_lwd DEFAULT: 1.5. The line width of the outline.
+#' @param end_type DEFAULT: "rounded". If "rounded", the corners of the chromatids are rounded. If "circle", the ends of the chromatids are half cirlces. If "square", the chromatids are rectangles with sharp corners.
 #' @export
 #' @examples plot_founder_chromosomes(col = qtl2::CCcolors[1], width = 0.15, gap = 0.3)
 plot_founder_chromosomes <- function(col,
@@ -314,13 +329,21 @@ plot_founder_chromosomes <- function(col,
                  end_type = end_type)
 }
 
-#' Draw cartoon chromosome pair for CC strains
+#' Draw cartoon chromosome pair for CC mouse strains
 #'
-#' This function ...
+#' This function makes a haplotype pair cartoon for inbred individuals, such as CC mouse strains
 #' 
+#' @param intervals Partitions of the unit interval (0 to 1) encoding recombination points for the chromatids.
+#' @param cols Colors for the partitions in \code{intervals}. Length be one less than the length of \code{intervals}.
+#' @param width DEFAULT: 0.15. The width of the chromatids.
+#' @param gap DEFAULT: 0.3. The space between the chromatids.
+#' @param y_shift DEFAULT: NULL. Option to shift the plot along the y-axis.
+#' @param x_shift DEFAULT: 0. Option to shift the plot along the x-axis.
+#' @param add_border DEFAULT: TRUE. If TRUE, a black outline is added to the chromatids. If FALSE, no outline is used.
+#' @param border_lwd DEFAULT: 1.5. The line width of the outline.
+#' @param end_type DEFAULT: "rounded". If "rounded", the corners of the chromatids are rounded. If "circle", the ends of the chromatids are half cirlces. If "square", the chromatids are rectangles with sharp corners.
 #' @export
-#' @examples 
-#' set.seed(10)
+#' @examples #' set.seed(10)
 #' plot_cc_chromosomes(intervals = c(0, sort(runif(n = 15, min = 0, max = 1)), 1), 
 #'                     col = sample(qtl2::CCcolors, 16, replace = TRUE), width = 0.15, gap = 0.3)
 plot_cc_chromosomes <- function(intervals, 
@@ -355,10 +378,21 @@ plot_cc_chromosomes <- function(intervals,
                  end_type = end_type)
 }
 
-#' Draw cartoon chromosome pair for DO or CC-RIX
+#' Draw cartoon chromosome pair for DO or CC-RIX mice
 #'
-#' This function ...
+#' This function makes a haplotype pair cartoon for outbred individuals, such as the DO or CC-RIX mice.
 #' 
+#' @param intervals1 Partitions of the unit interval (0 to 1) encoding recombination points for the left chromatid.
+#' @param intervals2 Partitions of the unit interval (0 to 1) encoding recombination points for the right chromatid.
+#' @param cols1 Colors for the partitions in \code{intervals1}. Length be one less than the length of \code{intervals1}.
+#' @param cols2 Colors for the partitions in \code{intervals2}. Length be one less than the length of \code{intervals2}.
+#' @param width DEFAULT: 0.15. The width of the chromatids.
+#' @param gap DEFAULT: 0.3. The space between the chromatids.
+#' @param y_shift DEFAULT: NULL. Option to shift the plot along the y-axis.
+#' @param x_shift DEFAULT: 0. Option to shift the plot along the x-axis.
+#' @param add_border DEFAULT: TRUE. If TRUE, a black outline is added to the chromatids. If FALSE, no outline is used.
+#' @param border_lwd DEFAULT: 1.5. The line width of the outline.
+#' @param end_type DEFAULT: "rounded". If "rounded", the corners of the chromatids are rounded. If "circle", the ends of the chromatids are half cirlces. If "square", the chromatids are rectangles with sharp corners.
 #' @export
 #' @examples 
 #' set.seed(10)

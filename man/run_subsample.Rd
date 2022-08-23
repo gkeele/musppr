@@ -15,8 +15,25 @@ run_subsample(
   prob = seq(0.8, 0.99, by = 0.01)
 )
 }
+\arguments{
+\item{qtl_table}{QTL results table that includes the chromosome of the QTL, its locus/marker name, and its trait name to match the phenotype data.}
+
+\item{sim_data}{Simulated QTL data, such as output from \code{sim_mpp_data}().}
+
+\item{genoprobs}{Founder haplotype data (i.e., "genoprobs") in the qtl2 format (a per chromosome list of 3D arrays that are individual x diplotype/allele x locus). For the CC-RIX and DO, allele dosages are expected.}
+
+\item{K}{The genetic relationship (i.e., kinship) information, expected to be a list of matrices for the leave-one-chromosome out (LOCO) approach.}
+
+\item{map}{The marker/locus information corresponding to the genoprobs. The expected format is qtl2 (a per chromosome list of position vectors with marker/locus as element names).}
+
+\item{num_draws}{DEFAULT: 100. The number of subsamples to be generated.}
+
+\item{sample_perc}{DEFAULT: 2/3. The proprotion of the data to sample for each subsample.}
+
+\item{prob}{DEFAULT: seq(0.8, 0.99, by = 0.01). The nominal probabilities of interval coverage to be evaluated (i.e., 95% confidence level).}
+}
 \description{
-This function ...
+This function subsamples the data and then runs scans to determine an confidence interval for QTL location.
 }
 \examples{
 run_subsample()

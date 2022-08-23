@@ -21,7 +21,7 @@ eval_sim_h2(
 
 \item{n}{The number of simulations to perform.}
 
-\item{n_per_genome}{DEFAULT: 1. The number of observations per genome. For experiments involving replicates, should use eval_sim_h2_with_reps() instead.}
+\item{n_per_genome}{DEFAULT: 1. The number of observations per genome (strains or F1s). For experiments involving replicates, should use eval_sim_h2_with_reps() instead.}
 
 \item{K}{The genetic relationship (i.e., kinship) matrix used for simulation and by default for estimation.}
 
@@ -39,7 +39,7 @@ eval_sim_h2(
 \code{eval_sim_h2} returns a \code{n}-vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n}-vector and the \code{k}-by-\code{n} simulated data matrix as elements.
 }
 \description{
-This function simulates trait data with a specified heritability and then performs heritability estimation.
+This function simulates trait data to have a specified heritability and then performs heritability estimation.
 }
 \examples{
 eval_sim_h2(sim_h2 = 0.8, n = 100, K = K_DO_overall)

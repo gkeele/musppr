@@ -1,16 +1,36 @@
 #' Simulate MPP data with effects from a single QTL, strain, and kinship
 #'
-#' This function ...
+#' This function simulates trait data to have specified QTL and polygene effect sizes based on genetic data from CC, CC-RIX, and DO mice. 
 #' 
+#' @param genoprobs Founder haplotype data (i.e., "genoprobs") in the qtl2 format (a per chromosome list of 3D arrays that are individual x diplotype/allele x locus). For the CC-RIX and DO, allele dosages are expected.
+#' @param map The marker/locus information corresponding to the genoprobs. The expected format is qtl2 (a per chromosome list of position vectors with marker/locus as element names).
+#' @param K DEFAULT: NULL. The genetic relationship (i.e., kinship) information, expected to be either a single matrix (as with heritability) or a list of matrices for the leave-one-chromosome out (LOCO) approach.
+#' @param samples DEFAULT: NULL. Subset of samples to use in simulations. If NULL, all individuals in genoprobs used.
+#' @param qtl_effect_size DEFAULT: 0.1. The proportion of variation explained by the QTL. Must be greater than or equal to 0 and less than 1 - \code{strain_effect_size} - \code{kinship_effect_size}.
+#' @param strain_effect_size DEFAULT: 0. The proportion of variation explained by strain identity. Must be greater than or equal to 0 and less than 1 - \code{qtl_effect_size} - \code{kinship_effect_size}.
+#' @param kinship_effect_size DEFAULT: 0. The proportion of variation explained by kinship/polygene. Must be greater than or equal to 0 and less than 1 - \code{qtl_effect_size} - \code{strain_effect_size}.
+#' @param locus DEFAULT: NULL. Specify as a vector of markers/loci corresponding to the map at which to simulate QTL. If NULL, loci will be randomly selected.
+#' @param vary_locus DEFAULT: TRUE. If \code{locus} = NULL, and multiple loci, as many as \code{num_sim} will be randomly sampled. This allows power calculations to incorporate sampling variation due to varying loci.
+#' @param num_replicates DEFAULT: 1. The number of replicates per genome (strains or F1s).
+#' @param num_sim DEFAULT: 1. The number of simulations to perform.
+#' @param M_ID DEFAULT: NULL. The functional allele to founder strain distribution, which can be encoded in an 8 x \code{num_alleles} M matrix. IF NULL, it is randomly sampled.
+#' @param sample_method DEFAULT: "uniform". How to randomly sample the functional allele to founder strain distribution M matrix. The alternative is "crp", meaning Chinese restaurant process, which upweights less-balanced M matrices.
+#' @param num_alleles DEFAULT: 8. The number of functions alleles. For the CC, CC-RIX, and DO, this will take values ranging from 2 to 8. For a bi-allelic variant, there are 2 alleles.
+#' @param scale_type DEFAULT: "sample". The reference population to which the effects are scaled. If "sample", effects are scaled to the simulated sample population. If "balanced", effects are scaled with respect to a homozygous and balanced population.
+#' @param num_founders DEFAULT: 8. The number of founder strains. For the CC, CC-RIX, and DO, this is 8.
+#' @param beta DEFAULT: NULL. The effect vector. The number of elements should match the number of columns of M. If NULL, it is randomly sampled according to M.
+#' @param sim_label DEFAULT: "sim_y". A prefix applied to the column names of the simulated data.
 #' @export
 #' @examples sim_mpp_data()
-sim_mpp_data <- function (genoprobs, map, K = NULL, samples = NULL,
+sim_mpp_data <- function (genoprobs, map, K = NULL, 
+                          samples = NULL,
                           qtl_effect_size = 0.1, strain_effect_size = 0, kinship_effect_size = 0.1,
                           locus = NULL, vary_locus = TRUE, 
                           num_replicates = 1, num_sim = 1, 
                           M_ID = NULL, sample_method = c("uniform", "crp"), num_alleles = 8, 
                           scale_type = c("sample", "balanced"),
-                          num_founders = 8, beta = NULL, sim_label = "sim_y") {
+                          num_founders = 8, beta = NULL, 
+                          sim_label = "sim_y") {
   
   sample_method <- sample_method[1]
   scale_type <- scale_type[1]
@@ -212,12 +232,23 @@ model_matrix_from_ID <- function (M_ID) {
 
 #' Run scans of parametric bootstrap samples to estimate a positional confidence interval for a QTL
 #'
-#' This function ...
+#' This function generates parametric bootstrap samples from QTL results and then runs scans to determine an confidence interval for QTL location.
 #' 
+#' @param qtl_table QTL results table that includes the chromosome of the QTL, its locus/marker name, and its trait name to match the phenotype data.
+#' @param sim_data Simulated QTL data, such as output from \code{sim_mpp_data}().
+#' @param genoprobs Founder haplotype data (i.e., "genoprobs") in the qtl2 format (a per chromosome list of 3D arrays that are individual x diplotype/allele x locus). For the CC-RIX and DO, allele dosages are expected.
+#' @param K The genetic relationship (i.e., kinship) information, expected to be a list of matrices for the leave-one-chromosome out (LOCO) approach.
+#' @param map The marker/locus information corresponding to the genoprobs. The expected format is qtl2 (a per chromosome list of position vectors with marker/locus as element names).
+#' @param num_samples DEFAULT: 100. The number of samples to be generated.
+#' @param prob DEFAULT: seq(0.8, 0.99, by = 0.01). The nominal probabilities of interval coverage to be evaluated (i.e., 95% confidence level).
 #' @export
 #' @examples run_parboot()
-run_parboot <- function(qtl_table, sim_data, genoprobs, 
-                        K, map, num_samples = 100,
+run_parboot <- function(qtl_table, 
+                        sim_data, 
+                        genoprobs, 
+                        K, 
+                        map, 
+                        num_samples = 100,
                         prob = seq(0.8, 0.99, by = 0.01)) {
   
   results_dat <- NULL
@@ -282,12 +313,23 @@ run_parboot <- function(qtl_table, sim_data, genoprobs,
 
 #' Run scans of Bayesian bootstrap samples to estimate a positional confidence interval for a QTL
 #'
-#' This function ...
+#' This function generates Bayesian bootstrap samples from QTL results and then runs scans to determine an confidence interval for QTL location.
 #' 
+#' @param qtl_table QTL results table that includes the chromosome of the QTL, its locus/marker name, and its trait name to match the phenotype data.
+#' @param sim_data Simulated QTL data, such as output from \code{sim_mpp_data}().
+#' @param genoprobs Founder haplotype data (i.e., "genoprobs") in the qtl2 format (a per chromosome list of 3D arrays that are individual x diplotype/allele x locus). For the CC-RIX and DO, allele dosages are expected.
+#' @param K The genetic relationship (i.e., kinship) information, expected to be a list of matrices for the leave-one-chromosome out (LOCO) approach.
+#' @param map The marker/locus information corresponding to the genoprobs. The expected format is qtl2 (a per chromosome list of position vectors with marker/locus as element names).
+#' @param num_samples DEFAULT: 100. The number of samples to be generated.
+#' @param prob DEFAULT: seq(0.8, 0.99, by = 0.01). The nominal probabilities of interval coverage to be evaluated (i.e., 95% confidence level).
 #' @export
 #' @examples run_bayesboot()
-run_bayesboot <- function(qtl_table, sim_data, genoprobs, 
-                          K, map, num_samples = 100,
+run_bayesboot <- function(qtl_table, 
+                          sim_data, 
+                          genoprobs, 
+                          K, 
+                          map, 
+                          num_samples = 100,
                           prob = seq(0.8, 0.99, by = 0.01)) {
   
   ## Sampling weights
@@ -356,12 +398,23 @@ run_bayesboot <- function(qtl_table, sim_data, genoprobs,
 
 #' Run scans of parametric permutation samples to estimate a positional confidence interval for a QTL
 #'
-#' This function ...
+#' This function generates parametric permutation samples from QTL results and then runs scans to determine an confidence interval for QTL location.
 #' 
+#' @param qtl_table QTL results table that includes the chromosome of the QTL, its locus/marker name, and its trait name to match the phenotype data.
+#' @param sim_data Simulated QTL data, such as output from \code{sim_mpp_data}().
+#' @param genoprobs Founder haplotype data (i.e., "genoprobs") in the qtl2 format (a per chromosome list of 3D arrays that are individual x diplotype/allele x locus). For the CC-RIX and DO, allele dosages are expected.
+#' @param K The genetic relationship (i.e., kinship) information, expected to be a list of matrices for the leave-one-chromosome out (LOCO) approach.
+#' @param map The marker/locus information corresponding to the genoprobs. The expected format is qtl2 (a per chromosome list of position vectors with marker/locus as element names).
+#' @param num_samples DEFAULT: 100. The number of samples to be generated.
+#' @param prob DEFAULT: seq(0.8, 0.99, by = 0.01). The nominal probabilities of interval coverage to be evaluated (i.e., 95% confidence level).
 #' @export
 #' @examples run_parperm()
-run_parperm <- function(qtl_table, sim_data, genoprobs, 
-                        K, map, num_samples = 100,
+run_parperm <- function(qtl_table, 
+                        sim_data, 
+                        genoprobs, 
+                        K, 
+                        map, 
+                        num_samples = 100,
                         prob = seq(0.8, 0.99, by = 0.01)) {
   
   results_dat <- NULL
@@ -425,12 +478,23 @@ run_parperm <- function(qtl_table, sim_data, genoprobs,
 
 #' Run scans of parametric permutation samples (with the kinship matrix) to estimate a positional confidence interval for a QTL
 #'
-#' This function ...
+#' This function generates parametric permutation samples from QTL results and then runs scans, including the random effect term for kinship, to determine an confidence interval for QTL location.
 #' 
+#' @param qtl_table QTL results table that includes the chromosome of the QTL, its locus/marker name, and its trait name to match the phenotype data.
+#' @param sim_data Simulated QTL data, such as output from \code{sim_mpp_data}().
+#' @param genoprobs Founder haplotype data (i.e., "genoprobs") in the qtl2 format (a per chromosome list of 3D arrays that are individual x diplotype/allele x locus). For the CC-RIX and DO, allele dosages are expected.
+#' @param K The genetic relationship (i.e., kinship) information, expected to be a list of matrices for the leave-one-chromosome out (LOCO) approach.
+#' @param map The marker/locus information corresponding to the genoprobs. The expected format is qtl2 (a per chromosome list of position vectors with marker/locus as element names).
+#' @param num_samples DEFAULT: 100. The number of samples to be generated.
+#' @param prob DEFAULT: seq(0.8, 0.99, by = 0.01). The nominal probabilities of interval coverage to be evaluated (i.e., 95% confidence level).
 #' @export
 #' @examples run_parperm_kinship()
-run_parperm_kinship <- function(qtl_table, sim_data, genoprobs, 
-                                K, map, num_samples = 100,
+run_parperm_kinship <- function(qtl_table, 
+                                sim_data, 
+                                genoprobs, 
+                                K, 
+                                map, 
+                                num_samples = 100,
                                 prob = seq(0.8, 0.99, by = 0.01)) {
   
   n <- nrow(sim_data)
@@ -503,12 +567,24 @@ run_parperm_kinship <- function(qtl_table, sim_data, genoprobs,
 
 #' Run scans of subsamples of data to estimate a positional confidence interval for a QTL
 #'
-#' This function ...
+#' This function subsamples the data and then runs scans to determine an confidence interval for QTL location.
 #' 
+#' @param qtl_table QTL results table that includes the chromosome of the QTL, its locus/marker name, and its trait name to match the phenotype data.
+#' @param sim_data Simulated QTL data, such as output from \code{sim_mpp_data}().
+#' @param genoprobs Founder haplotype data (i.e., "genoprobs") in the qtl2 format (a per chromosome list of 3D arrays that are individual x diplotype/allele x locus). For the CC-RIX and DO, allele dosages are expected.
+#' @param K The genetic relationship (i.e., kinship) information, expected to be a list of matrices for the leave-one-chromosome out (LOCO) approach.
+#' @param map The marker/locus information corresponding to the genoprobs. The expected format is qtl2 (a per chromosome list of position vectors with marker/locus as element names).
+#' @param num_draws DEFAULT: 100. The number of subsamples to be generated.
+#' @param sample_perc DEFAULT: 2/3. The proprotion of the data to sample for each subsample.
+#' @param prob DEFAULT: seq(0.8, 0.99, by = 0.01). The nominal probabilities of interval coverage to be evaluated (i.e., 95% confidence level).
 #' @export
 #' @examples run_subsample()
-run_subsample <- function(qtl_table, sim_data, genoprobs, 
-                          K, map, num_draws = 100,
+run_subsample <- function(qtl_table, 
+                          sim_data, 
+                          genoprobs, 
+                          K, 
+                          map, 
+                          num_draws = 100,
                           sample_perc = 2/3, 
                           prob = seq(0.8, 0.99, by = 0.01)) {
   
@@ -567,15 +643,24 @@ run_subsample <- function(qtl_table, sim_data, genoprobs,
 
 #' Evaluate mapping performance when using LOD drop or Bayesian credible support intervals
 #'
-#' This function ...
+#' This function evaluates QTL performance in terms of mapping power and false discovery rate for simulated data based on LOD support intervals or Bayesian credible intervals.
 #' 
+#' @param thresh DEFAULT: seq(6, 9, by = 0.5). LOD score thresholds to be evaluated.
+#' @param lod_drop DEFAULT: seq(1, 3, by = 0.1). LOD support levels to be evaluated.
+#' @param bci DEFAULT: seq(0.8, 0.95, by = 0.01). Nominal coverage probabilities for BCIs to be evaluated.
+#' @param use_lod_drop DEFAULT: TRUE. If TRUE, LOD support intervals are evaluated. If FALSE, BCIs are evaluated.
+#' @param scans Simulated QTL scan output from \code{scan1}() of the qtl2 package.
+#' @param map The marker/locus information corresponding to the genoprobs. The expected format is qtl2 (a per chromosome list of position vectors with marker/locus as element names).
+#' @param true_qtl A table with the true QTL for the simulated data, including trait names, chromosome of the QTL, and the marker/locus of the QTL.
 #' @export
 #' @examples eval_mapping_results()
 eval_mapping_results <- function(thresh = seq(6, 9, by = 0.5), 
                                  lod_drop = seq(1, 3, by = 0.1),
                                  bci = seq(0.8, 0.95, by = 0.01),
                                  use_lod_drop = TRUE,
-                                 scans, map, true_qtl) {
+                                 scans, 
+                                 map, 
+                                 true_qtl) {
   
   rate_dat <- NULL
   
@@ -634,8 +719,11 @@ eval_mapping_results <- function(thresh = seq(6, 9, by = 0.5),
 
 #' Evaluate mapping performance with null simulations
 #'
-#' This function ...
+#' This function evaluates QTL performance in terms of false QTL counts for simulated null data.
 #' 
+#' @param thresh DEFAULT: seq(6, 9, by = 0.5). LOD score thresholds to be evaluated.
+#' @param scans Simulated QTL scan output from \code{scan1}() of the qtl2 package.
+#' @param map The marker/locus information corresponding to the genoprobs. The expected format is qtl2 (a per chromosome list of position vectors with marker/locus as element names).
 #' @export
 #' @examples eval_null_mapping_results()
 eval_null_mapping_results <- function(thresh = seq(6, 10, by = 0.5), scans, map) {
@@ -657,8 +745,12 @@ eval_null_mapping_results <- function(thresh = seq(6, 10, by = 0.5), scans, map)
 
 #' Evaluate mapping performance when using sampling procedures, such as bootstraps
 #'
-#' This function ...
+#' This function evaluates QTL performance in terms of mapping power and false discovery rate for simulated data based on sampling procedures (e.g., parametric bootstraps).
 #' 
+#' @param thresh DEFAULT: seq(6, 9, by = 0.5). LOD score thresholds to be evaluated.
+#' @param prob DEFAULT: seq(0.8, 0.95, by = 0.01). Nominal coverage probabilities for the sampling procedure to be evaluated.
+#' @param parboot_results Results from sampling procedures. Output from the following functions: \code{run_parboot}(), \code{run_bayesboot}(), \code{run_parperm}(), and \code{run_parperm_kinship}().
+#' @param num_true_qtl Number of simulated QTL in total.
 #' @export
 #' @examples eval_mapping_sampling_results()
 eval_mapping_sampling_results <- function(thresh = seq(6, 9, by = 0.5), 
@@ -700,8 +792,12 @@ eval_mapping_sampling_results <- function(thresh = seq(6, 9, by = 0.5),
 
 #' Pull FWER thresholds from maximum LOD scores
 #'
-#' This function ...
+#' This function estimates significance threshold that control family-wise error rates (FWER) based on maximum LOD scores from scans of null parametric bootstraps or permutations of the data.
 #' 
+#' @param maxlod Vector of the maximum LOD scores from each null bootstrap sample or permutation.
+#' @param right_side DEFAULT: TRUE. If TRUE, p-value is calculated based on the right-hand tail of the distribution. If FALSE, left-hand tail is used.
+#' @param fwer DEFAULT: 0.05. The false positive probability (alpha) in terms of FWER.
+#' @param use_gev DEFAULT: TRUE. If TRUE, maximum LOD scores are used to fit an extreme value distribution, which is used to calculate the threshold. If FALSE, empirical quantiles are used instead.
 #' @export
 #' @examples pull_fwer_thresh()
 pull_fwer_thresh <- function(maxlod, 
