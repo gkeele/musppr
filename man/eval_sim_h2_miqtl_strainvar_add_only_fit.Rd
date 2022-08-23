@@ -39,7 +39,7 @@ eval_sim_h2_miqtl_strainvar_add_only_fit(
 \item{return_data}{DEFAULT: FALSE. IF TRUE, returns simulated data as well as heritability estimates.}
 }
 \value{
-\code{eval_sim_h2_miqtl_strainvar_add_only_fit} returns a \code{n_sims}-by-\code{2} vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n_sims}-vector and the \code{k}-by-\code{n_sims} simulated data matrix as elements.
+\code{eval_sim_h2_miqtl_strainvar_add_only_fit} returns a \code{n_sims}-by-\code{2} vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n_sims}-vector and the \code{k x n_sims} simulated data matrix as elements.
 }
 \description{
 This function simulates trait data for populations with replicates to have specified additive and strain/F1 heritability components and then performs additive heritability estimation.

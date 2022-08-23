@@ -16,7 +16,7 @@ eval_mapping_sampling_results(
 
 \item{prob}{DEFAULT: seq(0.8, 0.95, by = 0.01). Nominal coverage probabilities for the sampling procedure to be evaluated.}
 
-\item{parboot_results}{Results from sampling procedures. Output from the following functions: \code{run_parboot}(), \code{run_bayesboot}(), \code{run_parperm}(), and \code{run_parperm_kinship}().}
+\item{parboot_results}{Results from sampling procedures. Output from the following functions: \code{run_parboot()}, \code{run_bayesboot()}, \code{run_parperm()}, and \code{run_parperm_kinship()}.}
 
 \item{num_true_qtl}{Number of simulated QTL in total.}
 }

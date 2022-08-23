@@ -70,7 +70,7 @@ plot_ccrix_grid <- function(cc_strains,
 
 #' Genome scan plot
 #'
-#' This function takes scan output from \code{scan1}() of qtl2 and plots the genome scan.
+#' This function takes scan output from \code{qtl2::scan1()} and plots the genome scan.
 #' 
 #' @export
 #' @examples plot_genome_scan()

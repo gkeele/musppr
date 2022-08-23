@@ -7,7 +7,7 @@
 make_Kasv(K = NULL, Z = NULL)
 }
 \arguments{
-\item{K}{DEFAULT: NULL. Haplotype-based kinship matrix, as calculated with qtl2::calc_kinship().}
+\item{K}{DEFAULT: NULL. Haplotype-based kinship matrix, as calculated with \code{qtl2::calc_kinship()}.}
 
 \item{Z}{DEFAULT: NULL. SNP allele count design matrix. Provide Z if using a SNP-based kinship matrix.}
 }

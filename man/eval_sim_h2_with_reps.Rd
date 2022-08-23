@@ -39,7 +39,7 @@ eval_sim_h2_with_reps(
 \item{return_data}{DEFAULT: FALSE. IF TRUE, returns simulated data as well as heritability estimates.}
 }
 \value{
-\code{eval_sim_h2_with_reps} returns a \code{n_sims}-vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n_sims}-vector and the \code{k}-by-\code{n_sims} simulated data matrix as elements.
+\code{eval_sim_h2_with_reps} returns a \code{n_sims}-vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n_sims}-vector and the \code{k x n_sims} simulated data matrix as elements.
 }
 \description{
 This function simulates trait data for populations with replicates to have a specified heritability and then performs heritability estimation.

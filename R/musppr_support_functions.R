@@ -22,7 +22,7 @@ map_list_to_df <- function (map_list, chr_column = "chr", pos_column = "pos", ma
 #'
 #' This function takes a kinship matrix and calculates the average semivariance form.
 #' 
-#' @param K DEFAULT: NULL. Haplotype-based kinship matrix, as calculated with qtl2::calc_kinship().
+#' @param K DEFAULT: NULL. Haplotype-based kinship matrix, as calculated with \code{qtl2::calc_kinship()}.
 #' @param Z DEFAULT: NULL. SNP allele count design matrix. Provide Z if using a SNP-based kinship matrix.
 #' @export
 #' @examples make_Kasv()

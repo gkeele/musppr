@@ -23,7 +23,7 @@ eval_mapping_results(
 
 \item{use_lod_drop}{DEFAULT: TRUE. If TRUE, LOD support intervals are evaluated. If FALSE, BCIs are evaluated.}
 
-\item{scans}{Simulated QTL scan output from \code{scan1}() of the qtl2 package.}
+\item{scans}{Simulated QTL scan output from \code{qtl2::scan1()}.}
 
 \item{map}{The marker/locus information corresponding to the genoprobs. The expected format is qtl2 (a per chromosome list of position vectors with marker/locus as element names).}
 

@@ -36,7 +36,7 @@ eval_sim_h2(
 \item{return_data}{DEFAULT: FALSE. IF TRUE, returns simulated data as well as heritability estimates.}
 }
 \value{
-\code{eval_sim_h2} returns a \code{n}-vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n}-vector and the \code{k}-by-\code{n} simulated data matrix as elements.
+\code{eval_sim_h2} returns a \code{n}-vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n}-vector and the \code{k x n} simulated data matrix as elements.
 }
 \description{
 This function simulates trait data to have a specified heritability and then performs heritability estimation.

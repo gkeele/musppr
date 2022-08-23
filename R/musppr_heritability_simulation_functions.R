@@ -11,7 +11,7 @@
 #' @param method DEFAULT: "qtl2". The statistical package used to estimate heritability. Options are "qtl2", "miqtl", and "sommer".
 #' @param use_rint DEFAULT: FALSE. If TRUE, perfoms a rank-based inverse normal transformation on data after simulation but before estimation.
 #' @param return_data DEFAULT: FALSE. IF TRUE, returns simulated data as well as heritability estimates.
-#' @return \code{eval_sim_h2} returns a \code{n}-vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n}-vector and the \code{k}-by-\code{n} simulated data matrix as elements.
+#' @return \code{eval_sim_h2} returns a \code{n}-vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n}-vector and the \code{k x n} simulated data matrix as elements.
 #' @export
 #' @examples eval_sim_h2(sim_h2 = 0.8, n = 100, K = K_DO_overall)
 eval_sim_h2 <- function(sim_h2, 
@@ -92,7 +92,7 @@ eval_sim_h2 <- function(sim_h2,
 #' @param use_rint DEFAULT: FALSE. If TRUE, perfoms a rank-based inverse normal transformation on data after simulation but before estimation.
 #' @param do_Kasv_fit DEFAULT: FALSE. If TRUE, calculates the ASV form of the individual-level kinship matrix.
 #' @param return_data DEFAULT: FALSE. IF TRUE, returns simulated data as well as heritability estimates.
-#' @return \code{eval_sim_h2_with_reps} returns a \code{n_sims}-vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n_sims}-vector and the \code{k}-by-\code{n_sims} simulated data matrix as elements.
+#' @return \code{eval_sim_h2_with_reps} returns a \code{n_sims}-vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n_sims}-vector and the \code{k x n_sims} simulated data matrix as elements.
 #' @export
 #' @examples eval_sim_h2_with_reps(sim_h2 = 0.8, n_sims = 100, n_per_strain = 4, K_strains = K_CCstrain_overall, method = "miqtl")
 eval_sim_h2_with_reps <- function(sim_h2, 
@@ -186,7 +186,7 @@ eval_sim_h2_with_reps <- function(sim_h2,
 #' @param intercept DEFAULT: 0. A shared intercept to center the data.
 #' @param use_rint DEFAULT: FALSE. If TRUE, perfoms a rank-based inverse normal transformation on data after simulation but before estimation.
 #' @param return_data DEFAULT: FALSE. IF TRUE, returns simulated data as well as heritability estimates.
-#' @return \code{eval_sim_h2_sommer_strainvar} returns a \code{n_sims}-by-\code{2} vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n_sims}-vector and the \code{k}-by-\code{n_sims} simulated data matrix as elements.
+#' @return \code{eval_sim_h2_sommer_strainvar} returns a \code{n_sims}-by-\code{2} vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n_sims}-vector and the \code{k x n_sims} simulated data matrix as elements.
 #' @export
 #' @examples eval_sim_h2_sommer_strainvar(sim_h2_add_prop = 0.5, h2_total = 0.8, n_sims = 10, n_per_strain = 4, K_strains = K_CCstrain_overall)
 eval_sim_h2_sommer_strainvar <- function(sim_h2_add_prop, 
@@ -251,7 +251,7 @@ eval_sim_h2_sommer_strainvar <- function(sim_h2_add_prop,
 #' @param use_rint DEFAULT: FALSE. If TRUE, perfoms a rank-based inverse normal transformation on data after simulation but before estimation.
 #' @param do_Kasv_fit DEFAULT: FALSE. If TRUE, calculates the ASV form of the individual-level kinship matrix.
 #' @param return_data DEFAULT: FALSE. IF TRUE, returns simulated data as well as heritability estimates.
-#' @return \code{eval_sim_h2_miqtl_strainvar_add_only_fit} returns a \code{n_sims}-by-\code{2} vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n_sims}-vector and the \code{k}-by-\code{n_sims} simulated data matrix as elements.
+#' @return \code{eval_sim_h2_miqtl_strainvar_add_only_fit} returns a \code{n_sims}-by-\code{2} vector of heritability estimates if \code{return_data = FALSE}, otherwise returns a list with \code{n_sims}-vector and the \code{k x n_sims} simulated data matrix as elements.
 #' @export
 #' @examples eval_sim_h2_miqtl_strainvar_add_only_fit(sim_h2_add_prop = 0.5, h2_total = 0.8, n_sims = 10, n_per_strain = 4, K_strains = K_CCstrain_overall)
 eval_sim_h2_miqtl_strainvar_add_only_fit <- function(sim_h2_add_prop, 

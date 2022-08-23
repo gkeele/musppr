@@ -34,21 +34,21 @@ sim_mpp_data(
 
 \item{samples}{DEFAULT: NULL. Subset of samples to use in simulations. If NULL, all individuals in genoprobs used.}
 
-\item{qtl_effect_size}{DEFAULT: 0.1. The proportion of variation explained by the QTL. Must be greater than or equal to 0 and less than 1 - \code{strain_effect_size} - \code{kinship_effect_size}.}
+\item{qtl_effect_size}{DEFAULT: 0.1. The proportion of variation explained by the QTL. Must be greater than or equal to 0 and less than \code{1 - strain_effect_size - kinship_effect_size}.}
 
-\item{strain_effect_size}{DEFAULT: 0. The proportion of variation explained by strain identity. Must be greater than or equal to 0 and less than 1 - \code{qtl_effect_size} - \code{kinship_effect_size}.}
+\item{strain_effect_size}{DEFAULT: 0. The proportion of variation explained by strain identity. Must be greater than or equal to 0 and less than \code{1 - qtl_effect_size - kinship_effect_size}.}
 
-\item{kinship_effect_size}{DEFAULT: 0. The proportion of variation explained by kinship/polygene. Must be greater than or equal to 0 and less than 1 - \code{qtl_effect_size} - \code{strain_effect_size}.}
+\item{kinship_effect_size}{DEFAULT: 0. The proportion of variation explained by kinship/polygene. Must be greater than or equal to 0 and less than \code{1 - qtl_effect_size - strain_effect_size}.}
 
 \item{locus}{DEFAULT: NULL. Specify as a vector of markers/loci corresponding to the map at which to simulate QTL. If NULL, loci will be randomly selected.}
 
-\item{vary_locus}{DEFAULT: TRUE. If \code{locus} = NULL, and multiple loci, as many as \code{num_sim} will be randomly sampled. This allows power calculations to incorporate sampling variation due to varying loci.}
+\item{vary_locus}{DEFAULT: TRUE. If \code{locus = NULL} , and multiple loci, as many as \code{num_sim} will be randomly sampled. This allows power calculations to incorporate sampling variation due to varying loci.}
 
 \item{num_replicates}{DEFAULT: 1. The number of replicates per genome (strains or F1s).}
 
 \item{num_sim}{DEFAULT: 1. The number of simulations to perform.}
 
-\item{M_ID}{DEFAULT: NULL. The functional allele to founder strain distribution, which can be encoded in an 8 x \code{num_alleles} M matrix. IF NULL, it is randomly sampled.}
+\item{M_ID}{DEFAULT: NULL. The functional allele to founder strain distribution, which can be encoded in an \code{8 x num_alleles} M matrix. IF NULL, it is randomly sampled.}
 
 \item{sample_method}{DEFAULT: "uniform". How to randomly sample the functional allele to founder strain distribution M matrix. The alternative is "crp", meaning Chinese restaurant process, which upweights less-balanced M matrices.}
 

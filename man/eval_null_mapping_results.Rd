@@ -9,7 +9,7 @@ eval_null_mapping_results(thresh = seq(6, 10, by = 0.5), scans, map)
 \arguments{
 \item{thresh}{DEFAULT: seq(6, 9, by = 0.5). LOD score thresholds to be evaluated.}
 
-\item{scans}{Simulated QTL scan output from \code{scan1}() of the qtl2 package.}
+\item{scans}{Simulated QTL scan output from \code{qtl2::scan1()}.}
 
 \item{map}{The marker/locus information corresponding to the genoprobs. The expected format is qtl2 (a per chromosome list of position vectors with marker/locus as element names).}
 }
