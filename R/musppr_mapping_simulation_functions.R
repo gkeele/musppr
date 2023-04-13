@@ -824,7 +824,7 @@ pull_fwer_thresh <- function(maxlod,
   as.numeric(thresh)
 }
 
-#' Pull FWER p-value from maximum LOD scores
+#' Pull FWER p-value for a QTL from maximum LOD scores
 #'
 #' This function estimates a genome-wide significant p-value, controlling family-wise error rates (FWER), based on maximum LOD scores from scans of null parametric bootstraps or permutations of the data and the LOD score of a QTL of interest.
 #' 

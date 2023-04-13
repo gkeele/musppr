@@ -2,7 +2,7 @@
 % Please edit documentation in R/musppr_mapping_simulation_functions.R
 \name{pull_fwer_pval}
 \alias{pull_fwer_pval}
-\title{Pull FWER p-value from maximum LOD scores}
+\title{Pull FWER p-value for a QTL from maximum LOD scores}
 \usage{
 pull_fwer_pval(maxlod, right_side = TRUE, lod_obs, use_gev = TRUE)
 }
