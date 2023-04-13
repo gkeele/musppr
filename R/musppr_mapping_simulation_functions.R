@@ -792,7 +792,7 @@ eval_mapping_sampling_results <- function(thresh = seq(6, 9, by = 0.5),
 
 #' Pull FWER thresholds from maximum LOD scores
 #'
-#' This function estimates significance threshold that control family-wise error rates (FWER) based on maximum LOD scores from scans of null parametric bootstraps or permutations of the data.
+#' This function estimates significance thresholds that control family-wise error rates (FWER) based on maximum LOD scores from scans of null parametric bootstraps or permutations of the data.
 #' 
 #' @param maxlod Vector of the maximum LOD scores from each null bootstrap sample or permutation.
 #' @param right_side DEFAULT: TRUE. If TRUE, p-value is calculated based on the right-hand tail of the distribution. If FALSE, left-hand tail is used.
@@ -823,4 +823,41 @@ pull_fwer_thresh <- function(maxlod,
   
   as.numeric(thresh)
 }
+
+#' Pull FWER p-value from maximum LOD scores
+#'
+#' This function estimates a genome-wide significant p-value, controlling family-wise error rates (FWER), based on maximum LOD scores from scans of null parametric bootstraps or permutations of the data and the LOD score of a QTL of interest.
+#' 
+#' @param maxlod Vector of the maximum LOD scores from each null bootstrap sample or permutation.
+#' @param right_side DEFAULT: TRUE. If TRUE, p-value is calculated based on the right-hand tail of the distribution. If FALSE, left-hand tail is used.
+#' @param lod_obs The observed peak LOD score from a QTL of interest.
+#' @param use_gev DEFAULT: TRUE. If TRUE, maximum LOD scores are used to fit an extreme value distribution, which is used to calculate the threshold. If FALSE, empirical quantiles are used instead.
+#' @export
+#' @examples pull_fwer_pval()
+pull_fwer_pval <- function(maxlod, 
+                           right_side = TRUE, 
+                           lod_obs,
+                           use_gev = TRUE) {
+  
+  if (use_gev) {
+    ## Fit GEV from maximum LODs of permutations
+    evd_pars <- evd::fgev(maxlod)$estimate
+    ## Pull threshold as quantile from GEV
+    pval <- evd::pgev(q = lod_obs, 
+                      loc = evd_pars["loc"], 
+                      scale = evd_pars["scale"], 
+                      shape = evd_pars["shape"],
+                      lower.tail = FALSE)
+  } else {
+    ## Pull empirical p-values from permutation maximum LOD scores
+    if (right_side) {
+      pval <- mean(lod_obs > maxlod)
+    } else {
+      pval <- mean(lod_obs < maxlod)
+    }
+  }
+  
+  as.numeric(pval)
+}
+
 

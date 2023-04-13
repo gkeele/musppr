@@ -7,6 +7,6 @@ Depends: R (>= 3.5)
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3
 Imports: MASS, qtl2, ggplot2, dplyr, magrittr, reshape2, evd, psych
 Suggests: miqtl, sommer
