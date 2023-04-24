@@ -851,9 +851,9 @@ pull_fwer_pval <- function(maxlod,
   } else {
     ## Pull empirical p-values from permutation maximum LOD scores
     if (right_side) {
-      pval <- mean(lod_obs > maxlod)
-    } else {
       pval <- mean(lod_obs < maxlod)
+    } else {
+      pval <- mean(lod_obs > maxlod)
     }
   }
   
